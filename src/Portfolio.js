@@ -111,8 +111,8 @@ const Portfolio = () => {
 
   const projects = [
       {
-      title: "Toursium Website For Truelanka Exprince",
-      description: "A website for Toursium, a tour and travel company in Sri Lanka. The website is built using php. The website has features like user authentication, tour booking, tour listing, and user profile.",
+      title: "Tourism Website For Truelanka Experience",
+      description: "A website for Tourism, a tour and travel company in Sri Lanka. The website is built using php. The website has features like user authentication, tour booking, tour listing, and user profile.",
       tech: ["PHP", "MySQL", "HTML", "CSS", "JavaScript","Tailwind CSS"],
       github: "#",
       live: "https://truelankaexperience.com/",
@@ -151,8 +151,8 @@ const Portfolio = () => {
       image: project1
     },
     {
-      title: "Group Link Sharing Platfrom",
-      description: "A platform for sharing and discovering whatsapp groups, with features like group search and categorization.",
+      title: "Group Link Sharing Platform ",
+      description: "A platform  for sharing and discovering whatsapp groups, with features like group search and categorization.",
       tech: ["Php", "MySql"],
       github: "#",
       live: "https://groupshare.udavinwijesundara.com/",
