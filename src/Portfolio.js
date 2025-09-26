@@ -19,6 +19,7 @@ import project2 from './assets/project2.jpg';
 import project3 from './assets/project3.jpg';
 import project4 from './assets/project4.jpg';
 import project5 from './assets/project5.jpg';
+import project6 from './assets/project6.png';
 import resumePDF from './resume.pdf';
 
 
@@ -133,6 +134,14 @@ const Portfolio = () => {
       github: "#",
       live: "https://photography.udavinwijesundara.com/",
       image: project5
+    },
+    {
+      title: "Demo Landing Page for a Salon Website",
+      description: "A website for a salon. The website is built using html.",
+      tech: ["HTML", "CSS", "JavaScript", "Tailwind CSS"],
+      github: "#",
+      live: "https://salondemo.udavinwijesundara.com/",
+      image: project6
     },
     // {
     //   title: "Darcet Engineering Company Website",
@@ -837,7 +846,9 @@ const Portfolio = () => {
                         Code
                       </a> */}
                       <a
-                        href={project.live}
+                        href={project.live} 
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="flex items-center dark:text-gray-400 text-gray-600 hover:dark:text-white hover:text-black transition-colors duration-300"
                       >
                         <ExternalLink size={16} className="mr-1" />
