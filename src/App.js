@@ -1,10 +1,14 @@
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Portfolio from './Portfolio';
+import NotFound from './NotFound';
 
 function App() {
   return (
     <Router>
-      <Portfolio />
+      <Routes>
+        <Route path="/" element={<Portfolio />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </Router>
   );
 }

@@ -275,14 +275,32 @@ const Portfolio = () => {
           name: 'Udavin Wijesundara',
           url: 'https://udavinwijesundara.com/',
           jobTitle: 'Full Stack Developer',
-          image: 'https://udavinwijesundara.com/logo512.png',
+          description: 'Software Engineer specializing in React, Node.js, PHP, Laravel, and MySQL. Available for web development opportunities.',
+          image: 'https://udavinwijesundara.com/profile.jpg',
+          worksFor: {
+            '@type': 'Organization',
+            name: 'Enigma Solutions Pvt Ltd'
+          },
+          alumniOf: {
+            '@type': 'EducationalOrganization',
+            name: 'ICBT Campus'
+          },
+          knowsAbout: ['JavaScript', 'React', 'Node.js', 'PHP', 'Laravel', 'MySQL', 'HTML', 'CSS', 'Web Development', 'Software Engineering'],
           sameAs: [
             'https://github.com/udavinw',
             'https://www.linkedin.com/in/udavin-wijesundara/',
             'https://www.instagram.com/udavin_wijesundara/',
             'https://www.facebook.com/udavin.wijesundara'
           ],
-          email: 'mailto:hello@udavinwijesundara.com'
+          contactPoint: {
+            '@type': 'ContactPoint',
+            email: 'hello@udavinwijesundara.com',
+            contactType: 'professional'
+          },
+          address: {
+            '@type': 'PostalAddress',
+            addressCountry: 'LK'
+          }
         })}</script>
       </Helmet>
       <div className="fixed inset-0 -z-10">
@@ -458,12 +476,12 @@ const Portfolio = () => {
                 <span className="text-gray-900 dark:text-white">Hi, I'm</span>
               </div>
               <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient">
-                Udavin Wijesundara
+                Udavin Wijesundara - Full Stack Developer
               </div>
             </h1>
             
             <div className="text-xl md:text-2xl lg:text-3xl font-semibold text-gray-600 dark:text-gray-300">
-              Software Engineer
+              Software Engineer & Web Developer
               <span className="inline-block ml-2 w-1 h-8 bg-blue-500 animate-pulse"></span>
             </div>
           </div>
@@ -536,9 +554,12 @@ const Portfolio = () => {
                 <div className="relative w-full h-full bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700">
                   <img 
                     src={profilePhoto} 
-                    alt="Udavin Wijesundara - Software Engineer" 
+                    alt="Udavin Wijesundara - Full Stack Developer and Software Engineer" 
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-                    loading="lazy"
+                    loading="eager"
+                    width="384"
+                    height="384"
+                    sizes="(max-width: 768px) 288px, (max-width: 1024px) 320px, 384px"
                   />
                   
                   {/* Overlay gradient */}
@@ -676,7 +697,7 @@ const Portfolio = () => {
         <section id="about" className="py-20 px-6 relative">
           <div className="max-w-6xl mx-auto relative z-10">
             <h2 className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-              About Me
+              About Me - Full Stack Developer & Software Engineer
             </h2>
             
             <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -731,7 +752,7 @@ const Portfolio = () => {
         <section id="experience" className="py-20 px-6 relative">
           <div className="max-w-6xl mx-auto relative z-10">
             <h2 className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-              Experience
+              Professional Experience - Web Development & Software Engineering
             </h2>
             
             <div className="space-y-12">
@@ -765,7 +786,7 @@ const Portfolio = () => {
         <section id="education" className="py-20 px-6 relative">
           <div className="max-w-6xl mx-auto relative z-10">
             <h2 className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-              Education
+              Education - Software Engineering & Computing
             </h2>
             
             <div className="space-y-12">
@@ -801,7 +822,7 @@ const Portfolio = () => {
         <section id="projects" className="py-20 px-6 relative">
           <div className="max-w-6xl mx-auto relative z-10">
             <h2 className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-              Featured Projects
+              Featured Projects - Web Development Portfolio
             </h2>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -814,9 +835,12 @@ const Portfolio = () => {
                   <div className="relative overflow-hidden h-48">
                     <img
                       src={project.image}
-                      alt={project.title}
+                      alt={`${project.title} - Web Development Project by Udavin Wijesundara`}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       loading="lazy"
+                      width="400"
+                      height="192"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </div>
@@ -899,7 +923,7 @@ const Portfolio = () => {
         <section id="contact" className="py-20 px-6 relative">
         <div className="max-w-6xl mx-auto relative z-10">
           <h2 className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-            Get In Touch
+            Contact - Get In Touch With Full Stack Developer
           </h2>
           
           <div className="grid lg:grid-cols-2 gap-8">
