@@ -62,54 +62,7 @@ const NotFound = () => {
           </button>
         </div>
 
-        {/* Helpful Links */}
-        <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-6">
-            Looking for something specific?
-          </h2>
-          
-          <div className="grid sm:grid-cols-2 gap-4 mb-6">
-            <a
-              href="/#about"
-              className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 dark:bg-gray-700/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-300 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-            >
-              <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                <Search size={16} className="text-blue-600 dark:text-blue-400" />
-              </div>
-              <span>About Me</span>
-            </a>
-            
-            <a
-              href="/#projects"
-              className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 dark:bg-gray-700/50 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors duration-300 text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400"
-            >
-              <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                <Search size={16} className="text-purple-600 dark:text-purple-400" />
-              </div>
-              <span>My Projects</span>
-            </a>
-            
-            <a
-              href="/#experience"
-              className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 dark:bg-gray-700/50 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors duration-300 text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400"
-            >
-              <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                <Search size={16} className="text-green-600 dark:text-green-400" />
-              </div>
-              <span>Experience</span>
-            </a>
-            
-            <a
-              href="/#contact"
-              className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 dark:bg-gray-700/50 hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-colors duration-300 text-gray-700 dark:text-gray-300 hover:text-pink-600 dark:hover:text-pink-400"
-            >
-              <div className="w-8 h-8 rounded-full bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center">
-                <Mail size={16} className="text-pink-600 dark:text-pink-400" />
-              </div>
-              <span>Contact</span>
-            </a>
-          </div>
-
+        <div className="">
           {/* Social Links */}
           <div className="border-t border-gray-200 dark:border-gray-600 pt-6">
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
@@ -143,11 +96,6 @@ const NotFound = () => {
               </a>
             </div>
           </div>
-        </div>
-
-        {/* Fun Message */}
-        <div className="mt-8 text-sm text-gray-500 dark:text-gray-400">
-          <p>💡 Pro tip: Check the URL for typos, or use the navigation above!</p>
         </div>
       </div>
     </div>

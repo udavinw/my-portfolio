@@ -14,13 +14,8 @@ import {
 
 } from "lucide-react";
 import profilePhoto from './assets/profile.jpg';
-import project1 from './assets/project1.jpg';
-import project2 from './assets/project2.jpg';
-import project3 from './assets/project3.jpg';
-import project4 from './assets/project4.jpg';
-import project5 from './assets/project5.jpg';
-import project6 from './assets/project6.png';
 import resumePDF from './resume.pdf';
+import { projectsAPI, experienceAPI, educationAPI, testimonialsAPI } from './services/api';
 
 
 const Portfolio = () => {
@@ -35,7 +30,29 @@ const Portfolio = () => {
   });
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [showTopBtn, setShowTopBtn] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [experiences, setExperiences] = useState([]);
+  const [educations, setEducations] = useState([]);
+  const [testimonials, setTestimonials] = useState([]);
+  const [loadingData, setLoadingData] = useState(false);
+  const [loadError, setLoadError] = useState('');
   const cursorRef = useRef(null);
+
+  const monthToIndex = {
+    jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
+    jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11,
+  };
+  const parseStartDateFromDuration = (duration) => {
+    if (!duration || typeof duration !== 'string') return new Date(0);
+    const firstPart = duration.split('-')[0].trim();
+    const lower = firstPart.toLowerCase();
+    const yearMatch = lower.match(/(\d{4})/);
+    const monthMatch = lower.match(/(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/);
+    const year = yearMatch ? parseInt(yearMatch[1], 10) : 0;
+    const month = monthMatch ? monthToIndex[monthMatch[1]] : 0;
+    if (!year) return new Date(0);
+    return new Date(year, month, 1);
+  };
 
   useEffect(() => {
     if (darkMode) {
@@ -64,6 +81,61 @@ const Portfolio = () => {
     
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoadingData(true);
+        setLoadError('');
+        const [projectsRes, experienceRes, educationRes, testimonialsRes] = await Promise.all([
+          projectsAPI.getAll(),
+          experienceAPI.getAll(),
+          educationAPI.getAll(),
+          testimonialsAPI.getAll(),
+        ]);
+
+        const projectsRaw = [...(projectsRes.data || [])].sort((a, b) => {
+          const dateDiff = new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+          if (dateDiff !== 0) return dateDiff;
+          return String(a.title || '').localeCompare(String(b.title || ''));
+        });
+        const expRaw = [...(experienceRes.data || [])].sort((a, b) => {
+          const da = parseStartDateFromDuration(a.duration);
+          const db = parseStartDateFromDuration(b.duration);
+          return db - da;
+        });
+        const eduRaw = [...(educationRes.data || [])].sort((a, b) => {
+          const da = parseStartDateFromDuration(a.duration);
+          const db = parseStartDateFromDuration(b.duration);
+          return db - da;
+        });
+        const testiRaw = [...(testimonialsRes.data || [])].sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
+
+        const normalizedProjects = projectsRaw.map((p) => ({
+          title: p.title,
+          description: p.description,
+          tech: Array.isArray(p.tech)
+            ? p.tech
+            : (typeof p.tech === 'string' ? p.tech.split(',').map(t => t.trim()).filter(Boolean) : []),
+          github: p.github,
+          live: p.live,
+          image: p.imageUrl || p.image || '',
+        }));
+
+        setProjects(normalizedProjects);
+        setExperiences(expRaw);
+        setEducations(eduRaw);
+        setTestimonials(testiRaw);
+      } catch (err) {
+        console.error('Failed to load portfolio data', err);
+        setLoadError('Failed to load latest data. Showing static fallback where available.');
+      } finally {
+        setLoadingData(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -110,131 +182,17 @@ const Portfolio = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const projects = [
-      {
+  const fallbackProjects = [
+    {
       title: "Tourism Website For Truelanka Experience",
       description: "A website for Tourism, a tour and travel company in Sri Lanka. The website is built using php. The website has features like user authentication, tour booking, tour listing, and user profile.",
       tech: ["PHP", "MySQL", "HTML", "CSS", "JavaScript","Tailwind CSS"],
       github: "#",
       live: "https://truelankaexperience.com/",
-      image: project3
-    },
-    {
-      title: "ASmallBiz Order Management Platform",
-      description: "A comprehensive web application designed to help businesses efficiently manage orders, customers, and products. It also supports generating invoices and tracking sales for smoother operations.",
-      tech: ["PHP", "MySQL", "HTML", "CSS", "JavaScript", "Tailwind CSS"],
-      github: "#",
-      live: "https://asmallbiz.udavinwijesundara.com/",
-      image: project4
-    },
-    {
-      title: "Website For Udavin Wijesundara Photography",
-      description: "A website for Udavin Wijesundara Photography. The website is built using php. The website has features like ai integrated chat bot, user authentication, photo uploading, photo listing, and user profile.",
-      tech: ["PHP", "MySQL", "HTML", "CSS", "JavaScript", "Tailwind CSS"],
-      github: "#",
-      live: "https://photography.udavinwijesundara.com/",
-      image: project5
-    },
-    {
-      title: "Demo Landing Page for a Salon Website",
-      description: "A website for a salon. The website is built using html.",
-      tech: ["HTML", "CSS", "JavaScript", "Tailwind CSS"],
-      github: "#",
-      live: "https://salondemo.udavinwijesundara.com/",
-      image: project6
-    },
-    // {
-    //   title: "Darcet Engineering Company Website",
-    //   description: "A website for Darcet Engineering Company. The website is built using php. The website has features like project creation, advertisment creation",
-    //   tech: ["PHP", "MySQL", "HTML", "CSS", "JavaScript", "Tailwind CSS"],
-    //   github: "#",
-    //   live: "https://photography.udavinwijesundara.com/",
-    //   image: project5
-    // },
-    {
-      title: "WhatsApp Integrated Support System Using Bailyes",
-      description: "Nodejs WhatsApp Bot with Laravel Frontend and mysql databse",
-      tech: ["HTML", "Node.js", "PHP", "MySQL"],
-      github: "#",
-      live: "https://chatmate.udavinwijesundara.com/",
-      image: project1
-    },
-    {
-      title: "Group Link Sharing Platform ",
-      description: "A platform  for sharing and discovering whatsapp groups, with features like group search and categorization.",
-      tech: ["Php", "MySql"],
-      github: "#",
-      live: "https://groupshare.udavinwijesundara.com/",
-      image: project2
-    },
-  ];
-
-  const experience = [
-    {
-      company: "Senjeeey Advertising",
-      role: "Freelance Web Developer / Photographer",
-      duration: "June 2025 - Present",
-      description: "Developed and maintained web applications using php. Collaborated with cross-functional teams to deliver high-quality software solutions.",
-      icon: <Briefcase size={20} className="text-blue-400" />
-    },
-    {
-      company: "Enigma Solutions Pvt ltd",
-      role: "Software Engineer Intern",
-      duration: "Jan 2025 - Present",
-      description: "Developed and maintained web applications using Laravel Framework and have few exprince with ReactJs also. Collaborated with cross-functional teams to deliver high-quality software solutions.",
-      icon: <Briefcase size={20} className="text-blue-400" />
-    },
-    {
-      company: "Freelance Developer",
-      role: "Web Developer",
-      duration: "2023 - Present",
-      description: "Built custom websites and web applications for clients. Specialized in responsive design and performance optimization.",
-      icon: <Code size={20} className="text-purple-400" />
-    },
-  ];
-
-  const education = [
-    {
-      institution: "ICBT Campus",
-      degree: "Higher Diploma in Computing and Software Engineering",
-      duration: "May 2025 - Present",
-      achievements: [],
-      icon: <User size={20} className="text-green-400" />
-    },
-    {
-      institution: "ICBT Campus",
-      degree: "Internation Diploma In Information And Communication Technology (Level 3)",
-      duration: "2024",
-      achievements: [],
-      icon: <Star size={20} className="text-yellow-400" />
+      image: "/logo512.png"
     }
   ];
 
-  const testimonials = [
-    {
-      name: "Sarah Johnson",
-      role: "Product Manager at Tech Solutions",
-      feedback: "John demonstrated exceptional problem-solving skills and delivered high-quality code ahead of schedule. He's a great team player!",
-      avatar: "https://randomuser.me/api/portraits/women/44.jpg"
-    },
-    {
-      name: "Michael Chen",
-      role: "CTO at Startup Labs",
-      feedback: "Working with John was a pleasure. His attention to detail and clean code practices are impressive for his level of experience.",
-      avatar: "https://randomuser.me/api/portraits/men/32.jpg"
-    }
-  ];
-
-    const skills = [
-    { name: "JavaScript", level: 90, icon: <Code2 size={18} /> },
-    { name: "HTML", level: 90, icon: <FileText size={18} /> },
-    { name: "PHP", level: 90, icon: <FileCode size={18} /> },
-    { name: "CSS", level: 90, icon: <Palette size={18} /> },
-    { name: "React", level: 60, icon: <Code2 size={18} /> },
-    { name: "Node.js", level: 70, icon: <Server size={18} /> },
-    { name: "MySQL", level: 80, icon: <Database size={18} /> },
-    { name: "Git", level: 85, icon: <GitBranch size={18} /> },
-    ];
   const socialLinks = [
     { icon: <Github size={24} />, url: "https://github.com/udavinw", name: "GitHub" },
     { icon: <Linkedin size={24} />, url: "https://www.linkedin.com/in/udavin-wijesundara/", name: "LinkedIn" },
@@ -248,8 +206,6 @@ const Portfolio = () => {
     setActiveSection(sectionId);
     setMobileMenuOpen(false);
   };
-
-  
 
   return (
     <div className="relative min-h-screen overflow-x-hidden transition-colors duration-300">
@@ -476,7 +432,7 @@ const Portfolio = () => {
                 <span className="text-gray-900 dark:text-white">Hi, I'm</span>
               </div>
               <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient">
-                Udavin Wijesundara - Full Stack Developer
+                Udavin Wijesundara 
               </div>
             </h1>
             
@@ -630,77 +586,15 @@ const Portfolio = () => {
       }
     `}</style>
   </section>
-
-        {/* <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden">
-          <div className="relative z-10 px-6 w-full max-w-6xl mx-auto">
-            <div className="flex flex-col md:flex-row items-center gap-12">
-              <div className="w-64 h-64 md:w-80 md:h-80 mx-auto md:mx-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 p-1 shadow-lg shadow-blue-500/20">
-                <div className="w-full h-full rounded-full dark:bg-gray-900 bg-white overflow-hidden border-2 dark:border-gray-800 border-gray-200">
-                  <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-gray-800 dark:to-gray-700 flex items-center justify-center">
-                    <img 
-                        src={profilePhoto} 
-                        alt="Profile" 
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-center md:text-left">
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6">
-                  <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-                    Udavin Wijesundara
-                  </span>
-                </h1>
-                
-                <p className="text-xl md:text-2xl dark:text-gray-300 text-gray-700 mb-8">
-                  Software Engineer Intern passionate about creating innovative solutions and learning cutting-edge technologies.
-                </p>
-                
-                <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start mb-12">
-                  <button
-                    onClick={() => scrollToSection('projects')}
-                    className="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-lg shadow-blue-500/20 text-white"
-                  >
-                    View My Work
-                  </button>
-                    <button onClick={() => window.open(resumePDF, '_blank')}
-                    className="px-8 py-3 border dark:border-gray-600 border-gray-300 rounded-full hover:dark:border-gray-400 hover:border-gray-500 transition-colors duration-300 flex items-center justify-center gap-2 dark:text-gray-300 text-gray-700"
-                    >
-                    <Download size={20} />
-                    Download Resume
-                </button>
-                </div>
-                
-                <div className="flex justify-center md:justify-start space-x-6">
-                  {socialLinks.slice(0, 4).map((social, index) => (
-                    <a 
-                      key={index} href={social.url} target="_blank" rel="noopener noreferrer"
-                      className="dark:text-gray-400 text-gray-600 hover:dark:text-white hover:text-black transition-colors duration-300"
-                      aria-label={social.name}
-                    >
-                      {social.icon}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-            <ChevronDown size={24} className="dark:text-gray-400 text-gray-600" />
-          </div>
-        </section> */}
-
         {/* About Section */}
         <section id="about" className="py-20 px-6 relative">
           <div className="max-w-6xl mx-auto relative z-10">
             <h2 className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
               About Me - Full Stack Developer & Software Engineer
             </h2>
-            
+
             <div className="grid md:grid-cols-2 gap-12 items-center">
+              {/* Left Side - About */}
               <div>
                 <p className="text-lg dark:text-gray-300 text-gray-700 mb-6 leading-relaxed">
                   I'm a passionate software engineering intern with a strong foundation in modern web technologies. 
@@ -722,31 +616,68 @@ const Portfolio = () => {
                   ))}
                 </div>
               </div>
-              
+
+              {/* Right Side - Skills */}
               <div>
                 <h3 className="text-2xl font-semibold mb-6">Technical Skills</h3>
-                <div className="space-y-4">
-                  {skills.map((skill, index) => (
-                    <div key={skill.name}>
-                      <div className="flex justify-between mb-2">
-                        <span className="dark:text-gray-300 text-gray-700 flex items-center gap-2">
-                          <span className="text-sm">{skill.icon}</span> {skill.name}
-                        </span>
-                        <span className="dark:text-gray-400 text-gray-600">{skill.level}%</span>
+
+                <div className="grid md:grid-cols-2 gap-8">
+                  {/* Left Column */}
+                  <div className="space-y-4">
+                    {[
+                      { name: "JavaScript", level: 90 },
+                      { name: "React", level: 80 },
+                      { name: "Node.js", level: 80 },
+                      { name: "Express.js", level: 80 },
+                      { name: "MongoDB", level: 80 },
+                      { name: "MySQL", level: 80 },
+                      { name: "Laravel", level: 75 },
+                    ].map((skill) => (
+                      <div key={skill.name}>
+                        <div className="flex justify-between mb-2">
+                          <span className="dark:text-gray-300 text-gray-700">{skill.name}</span>
+                          <span className="dark:text-gray-400 text-gray-600">{skill.level}%</span>
+                        </div>
+                        <div className="w-full dark:bg-gray-700/50 bg-gray-200 rounded-full h-2 overflow-hidden">
+                          <div
+                            className="bg-gradient-to-r from-blue-400 to-purple-500 h-2 rounded-full transition-all duration-1000 ease-out"
+                            style={{ width: `${skill.level}%` }}
+                          />
+                        </div>
                       </div>
-                      <div className="w-full dark:bg-gray-700/50 bg-gray-200 rounded-full h-2 overflow-hidden backdrop-blur-sm">
-                        <div
-                          className="bg-gradient-to-r from-blue-400 to-purple-500 h-2 rounded-full transition-all duration-1000 ease-out"
-                          style={{ width: `${skill.level}%` }}
-                        />
+                    ))}
+                  </div>
+
+                  {/* Right Column */}
+                  <div className="space-y-4">
+                    {[
+                      { name: "C++", level: 50 },
+                      { name: "HTML", level: 95 },
+                      { name: "CSS", level: 90 },
+                      { name: "Tailwind CSS", level: 90 },
+                      { name: "PHP", level: 85 },
+                      { name: "Git", level: 85 },
+                    ].map((skill) => (
+                      <div key={skill.name}>
+                        <div className="flex justify-between mb-2">
+                          <span className="dark:text-gray-300 text-gray-700">{skill.name}</span>
+                          <span className="dark:text-gray-400 text-gray-600">{skill.level}%</span>
+                        </div>
+                        <div className="w-full dark:bg-gray-700/50 bg-gray-200 rounded-full h-2 overflow-hidden">
+                          <div
+                            className="bg-gradient-to-r from-blue-400 to-purple-500 h-2 rounded-full transition-all duration-1000 ease-out"
+                            style={{ width: `${skill.level}%` }}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
+
 
         {/* Experience Section */}
         <section id="experience" className="py-20 px-6 relative">
@@ -756,13 +687,13 @@ const Portfolio = () => {
             </h2>
             
             <div className="space-y-12">
-              {experience.map((exp, index) => (
+              {experiences.map((exp, index) => (
                 <div key={index} className="flex gap-6">
                   <div className="flex flex-col items-center">
-                    <div className="p-3 rounded-full dark:bg-gray-700/60 bg-gray-200 backdrop-blur-sm">
-                      {exp.icon}
+                  <div className="p-3 rounded-full dark:bg-gray-700/60 bg-gray-200 backdrop-blur-sm">
+                      <Briefcase size={20} className="text-blue-400" />
                     </div>
-                    {index !== experience.length - 1 && (
+                    {index !== experiences.length - 1 && (
                       <div className="w-0.5 h-full dark:bg-gray-600 bg-gray-300 mt-2"></div>
                     )}
                   </div>
@@ -790,13 +721,13 @@ const Portfolio = () => {
             </h2>
             
             <div className="space-y-12">
-              {education.map((edu, index) => (
+              {educations.map((edu, index) => (
                 <div key={index} className="flex gap-6">
                   <div className="flex flex-col items-center">
                     <div className="p-3 rounded-full dark:bg-gray-700/60 bg-gray-200 backdrop-blur-sm">
-                      {edu.icon}
+                      <User size={20} className="text-green-400" />
                     </div>
-                    {index !== education.length - 1 && (
+                    {index !== educations.length - 1 && (
                       <div className="w-0.5 h-full dark:bg-gray-600 bg-gray-300 mt-2"></div>
                     )}
                   </div>
@@ -807,7 +738,7 @@ const Portfolio = () => {
                       <span className="dark:text-gray-400 text-gray-600">{edu.duration}</span>
                     </div>
                     <ul className="dark:text-gray-300 text-gray-700 list-disc pl-5 space-y-1">
-                      {edu.achievements.map((achievement, i) => (
+                      {(edu.achievements || []).map((achievement, i) => (
                         <li key={i}>{achievement}</li>
                       ))}
                     </ul>
@@ -826,7 +757,7 @@ const Portfolio = () => {
             </h2>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {projects.map((project, index) => (
+              {(projects.length ? projects : fallbackProjects).map((project, index) => (
                 <div
                   key={project.title}
                   className="dark:bg-gray-900/60 bg-white/60 rounded-xl overflow-hidden dark:border-gray-700 border-gray-200 hover:dark:border-gray-600 hover:border-gray-400 transition-all duration-300 group relative backdrop-blur-sm"
@@ -887,37 +818,43 @@ const Portfolio = () => {
         </section>
 
         {/* Testimonials Section */}
-        {/* <section id="testimonials" className="py-20 px-6 relative">
-          <div className="max-w-6xl mx-auto relative z-10">
-            <h2 className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-              Testimonials
-            </h2>
-            
-            <div className="grid md:grid-cols-2 gap-8">
-              {testimonials.map((testimonial, index) => (
-                <div
-                  key={index}
-                  className="dark:bg-gray-800/60 bg-gray-100/60 rounded-xl p-8 border dark:border-gray-700 border-gray-200 backdrop-blur-sm"
-                >
-                  <div className="flex items-center gap-4 mb-6">
-                    <img 
-                      src={testimonial.avatar} 
-                      alt={testimonial.name}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                    <div>
-                      <h4 className="font-semibold dark:text-white text-gray-800">{testimonial.name}</h4>
-                      <p className="dark:text-gray-400 text-gray-600 text-sm">{testimonial.role}</p>
+        {testimonials && testimonials.length > 0 && (
+          <section id="testimonials" className="py-20 px-6 relative">
+            <div className="max-w-6xl mx-auto relative z-10">
+              <h2 className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                Testimonials
+              </h2>
+
+              <div className="grid md:grid-cols-2 gap-8">
+                {testimonials.map((testimonial, index) => (
+                  <div
+                    key={index}
+                    className="dark:bg-gray-800/60 bg-gray-100/60 rounded-xl p-8 border dark:border-gray-700 border-gray-200 backdrop-blur-sm"
+                  >
+                    <div className="flex items-center gap-4 mb-6">
+                      <img
+                        src={testimonial.avatarUrl}
+                        alt={testimonial.name}
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                      <div>
+                        <h4 className="font-semibold dark:text-white text-gray-800">
+                          {testimonial.name}
+                        </h4>
+                        <p className="dark:text-gray-400 text-gray-600 text-sm">
+                          {testimonial.role}
+                        </p>
+                      </div>
                     </div>
+                    <p className="dark:text-gray-300 text-gray-700 italic">
+                      "{testimonial.feedback}"
+                    </p>
                   </div>
-                  <p className="dark:text-gray-300 text-gray-700 italic">
-                    "{testimonial.feedback}"
-                  </p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        </section> */}
+          </section>
+        )}
 
         {/* Contact Section */}
         <section id="contact" className="py-20 px-6 relative">
