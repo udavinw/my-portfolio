@@ -17,7 +17,6 @@ const AdminHeader = ({ onMenuClick, activeSection, navigationItems, setActiveSec
 
   const currentSection = navigationItems.find(item => item.id === activeSection);
 
-  // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -28,7 +27,6 @@ const AdminHeader = ({ onMenuClick, activeSection, navigationItems, setActiveSec
         console.log('Token found:', !!token); // Debug log
         console.log('User data found:', !!userDataString); // Debug log
         
-        // First try to get user data from localStorage (stored during login)
         if (userDataString) {
           try {
             const userData = JSON.parse(userDataString);
@@ -39,11 +37,9 @@ const AdminHeader = ({ onMenuClick, activeSection, navigationItems, setActiveSec
             });
           } catch (error) {
             console.error('Error parsing user data from localStorage:', error);
-            // Fall back to token decoding
             decodeTokenForUserData(token);
           }
         } else if (token) {
-          // Fall back to token decoding if no user data in localStorage
           decodeTokenForUserData(token);
         } else {
           console.log('No token or user data found');

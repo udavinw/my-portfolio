@@ -18,7 +18,7 @@ export default function AdminLogin() {
 
     try {
       const res = await axios.post(
-        `${process.env.BACKEND_URL}/auth/login`,
+        `https://phortfolio-backend-new.onrender.com/auth/login`,
         { email, password }
       );
       
