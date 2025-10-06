@@ -14,7 +14,6 @@ function App() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setFadeOut(true);
-      // Wait for fade animation to complete before hiding preloader
       setTimeout(() => {
         setLoading(false);
       }, 800); // Match this with the CSS transition duration
@@ -38,7 +37,7 @@ function App() {
             transition: "opacity 0.8s ease-in-out",
           }}
         >
-          <Preloader text="UDAVIN WIJESUNDARA" />
+          <Preloader text="UDAVIN" />
         </div>
       )}
       <div
