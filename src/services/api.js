@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance with base configuration
 const api = axios.create({
-  baseURL: 'https://phortfolio-backend-new.onrender.com/',
+  baseURL: 'https://phortfolio-backend-uw-42cb62b1475d.herokuapp.com/',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
