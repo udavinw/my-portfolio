@@ -995,23 +995,6 @@ const Portfolio = () => {
               <p>
                 &copy; {new Date().getFullYear()} Udavin Wijesundara. All rights reserved.
               </p>
-              
-              <div className="flex items-center gap-1">
-                <span>Built with</span>
-                <span className="text-red-500 animate-pulse">❤️</span>
-                <span>using</span>
-                <div className="flex items-center gap-2 ml-2">
-                  <span className="px-2 py-1 rounded dark:bg-blue-500/10 bg-blue-100 text-blue-500 text-xs font-medium">
-                    React
-                  </span>
-                  <span className="px-2 py-1 rounded dark:bg-cyan-500/10 bg-cyan-100 text-cyan-500 text-xs font-medium">
-                    Tailwind
-                  </span>
-                  <span className="px-2 py-1 rounded dark:bg-purple-500/10 bg-purple-100 text-purple-500 text-xs font-medium">
-                    Framer Motion
-                  </span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
