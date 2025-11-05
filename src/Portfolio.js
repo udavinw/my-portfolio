@@ -13,12 +13,14 @@ import {
   ArrowUp
 
 } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
 import profilePhoto from './assets/profile.jpg';
 import resumePDF from './resume.pdf';
 import { projectsAPI, experienceAPI, educationAPI, testimonialsAPI } from './services/api';
 
 
 const Portfolio = () => {
+  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('home');
   const [isScrolled, setIsScrolled] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
@@ -112,15 +114,16 @@ const Portfolio = () => {
         });
         const testiRaw = [...(testimonialsRes.data || [])].sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
 
-        const normalizedProjects = projectsRaw.map((p) => ({
+                const normalizedProjects = projectsRaw.map((p) => ({
           title: p.title,
           description: p.description,
           tech: Array.isArray(p.tech)
             ? p.tech
-            : (typeof p.tech === 'string' ? p.tech.split(',').map(t => t.trim()).filter(Boolean) : []),
+            : (typeof p.tech === 'string' ? p.tech.split(',').map(t => t.trim()).filter(Boolean) : []),                                                         
           github: p.github,
           live: p.live,
           image: p.imageUrl || p.image || '',
+          featured: p.featured || false,
         }));
 
         setProjects(normalizedProjects);
@@ -393,7 +396,6 @@ const Portfolio = () => {
         </nav>
 
   <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20 pb-20">
-    {/* Animated background grid */}
     <div className="absolute inset-0 opacity-20 dark:opacity-10">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-blue-950/20 dark:via-purple-950/20 dark:to-pink-950/20"></div>
       <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -406,7 +408,6 @@ const Portfolio = () => {
       </svg>
     </div>
 
-    {/* Floating geometric shapes */}
     <div className="absolute inset-0 pointer-events-none">
       <div className="absolute top-20 left-10 w-2 h-2 bg-blue-400 rounded-full animate-pulse opacity-60"></div>
       <div className="absolute top-32 right-20 w-1 h-1 bg-purple-500 rounded-full animate-ping opacity-40"></div>
@@ -417,15 +418,7 @@ const Portfolio = () => {
     <div className="relative z-10 px-6 w-full max-w-7xl mx-auto">
       <div className="grid lg:grid-cols-2 gap-16 items-center">
         
-        {/* Text Content */}
         <div className="order-2 lg:order-1 text-center lg:text-left space-y-8">
-          {/* Role Badge */}
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 border border-blue-200 dark:border-blue-800/30 backdrop-blur-sm">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-2"></div>
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Available for opportunities</span>
-          </div>
-
-          {/* Main Heading */}
           <div className="space-y-4">
             <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
               <div className="mb-2">
@@ -442,13 +435,11 @@ const Portfolio = () => {
             </div>
           </div>
 
-          {/* Description */}
           <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-2xl leading-relaxed">
             Passionate about crafting elegant solutions and pushing the boundaries of what's possible with code. 
             Currently building the future, one line at a time.
           </p>
 
-          {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
             <button
               onClick={() => scrollToSection('projects')}
@@ -474,7 +465,6 @@ const Portfolio = () => {
             </button>
           </div>
 
-          {/* Social Links */}
           <div className="flex justify-center lg:justify-start items-center gap-6 pt-4">
             <span className="text-sm text-gray-500 dark:text-gray-400 hidden sm:block">Connect with me:</span>
             <div className="flex gap-4">
@@ -496,16 +486,13 @@ const Portfolio = () => {
           </div>
         </div>
 
-        {/* Profile Image */}
         <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
           <div className="relative">
-            {/* Animated rings */}
             <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 p-1 animate-spin-slow">
               <div className="w-full h-full rounded-full bg-white dark:bg-gray-900"></div>
             </div>
             
             <div className="relative w-72 h-72 md:w-80 md:h-80 lg:w-96 lg:h-96">
-              {/* Main image container */}
               <div className="absolute inset-2 rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-2xl">
                 <div className="relative w-full h-full bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700">
                   <img 
@@ -518,12 +505,10 @@ const Portfolio = () => {
                     sizes="(max-width: 768px) 288px, (max-width: 1024px) 320px, 384px"
                   />
                   
-                  {/* Overlay gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-blue-600/10 via-transparent to-purple-600/10 pointer-events-none"></div>
                 </div>
               </div>
 
-              {/* Floating badges */}
               <div className="absolute -top-4 -right-4 bg-white dark:bg-gray-800 rounded-full p-3 shadow-xl border border-gray-100 dark:border-gray-700 animate-float">
                 <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
               </div>
@@ -537,7 +522,6 @@ const Portfolio = () => {
       </div>
     </div>
     
-    {/* Enhanced scroll indicator */}
     <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
       <div className="flex flex-col items-center animate-bounce">
         <span className="text-xs text-gray-500 dark:text-gray-400 mb-2 animate-pulse">Scroll to explore</span>
@@ -586,7 +570,6 @@ const Portfolio = () => {
       }
     `}</style>
   </section>
-        {/* About Section */}
         <section id="about" className="py-20 px-6 relative">
           <div className="max-w-6xl mx-auto relative z-10">
             <h2 className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
@@ -594,7 +577,6 @@ const Portfolio = () => {
             </h2>
 
             <div className="grid md:grid-cols-2 gap-12 items-center">
-              {/* Left Side - About */}
               <div>
                 <p className="text-lg dark:text-gray-300 text-gray-700 mb-6 leading-relaxed">
                   I'm a passionate software engineering intern with a strong foundation in modern web technologies. 
@@ -617,12 +599,10 @@ const Portfolio = () => {
                 </div>
               </div>
 
-              {/* Right Side - Skills */}
               <div>
                 <h3 className="text-2xl font-semibold mb-6">Technical Skills</h3>
 
                 <div className="grid md:grid-cols-2 gap-8">
-                  {/* Left Column */}
                   <div className="space-y-4">
                     {[
                       { name: "JavaScript", level: 90 },
@@ -648,7 +628,6 @@ const Portfolio = () => {
                     ))}
                   </div>
 
-                  {/* Right Column */}
                   <div className="space-y-4">
                     {[
                       { name: "C++", level: 50 },
@@ -679,7 +658,6 @@ const Portfolio = () => {
         </section>
 
 
-        {/* Experience Section */}
         <section id="experience" className="py-20 px-6 relative">
           <div className="max-w-6xl mx-auto relative z-10">
             <h2 className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
@@ -713,7 +691,6 @@ const Portfolio = () => {
           </div>
         </section>
 
-        {/* Education Section */}
         <section id="education" className="py-20 px-6 relative">
           <div className="max-w-6xl mx-auto relative z-10">
             <h2 className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
@@ -749,15 +726,21 @@ const Portfolio = () => {
           </div>
         </section>
 
-        {/* Projects Section */}
         <section id="projects" className="py-20 px-6 relative">
           <div className="max-w-6xl mx-auto relative z-10">
             <h2 className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
               Featured Projects - Web Development Portfolio
             </h2>
             
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {(projects.length ? projects : fallbackProjects).map((project, index) => (
+            {(() => {
+              const featuredProjects = projects.filter(p => p.featured === true);
+              const allProjects = projects.length > 0 ? projects : fallbackProjects;
+              const displayProjects = featuredProjects.length > 0 ? featuredProjects : allProjects;
+              
+              return (
+                <>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {displayProjects.map((project, index) => (
                 <div
                   key={project.title}
                   className="dark:bg-gray-900/60 bg-white/60 rounded-xl overflow-hidden dark:border-gray-700 border-gray-200 hover:dark:border-gray-600 hover:border-gray-400 transition-all duration-300 group relative backdrop-blur-sm"
@@ -812,12 +795,29 @@ const Portfolio = () => {
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+                    ))}
+                  </div>
+                  
+                  {(() => {
+                    const totalProjects = projects.length > 0 ? projects.length : fallbackProjects.length;
+                    return featuredProjects.length > 0 && totalProjects > featuredProjects.length ? (
+                      <div className="text-center mt-12">
+                        <button
+                          onClick={() => navigate('/projects')}
+                          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                        >
+                          <Code size={20} />
+                          View All Projects
+                        </button>
+                      </div>
+                    ) : null;
+                  })()}
+                </>
+              );
+            })()}
           </div>
         </section>
 
-        {/* Testimonials Section */}
         {testimonials && testimonials.length > 0 && (
           <section id="testimonials" className="py-20 px-6 relative">
             <div className="max-w-6xl mx-auto relative z-10">
@@ -856,7 +856,6 @@ const Portfolio = () => {
           </section>
         )}
 
-        {/* Contact Section */}
         <section id="contact" className="py-20 px-6 relative">
         <div className="max-w-6xl mx-auto relative z-10">
           <h2 className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
@@ -864,7 +863,6 @@ const Portfolio = () => {
           </h2>
           
           <div className="grid lg:grid-cols-2 gap-8">
-            {/* Left Column - Contact Info Cards */}
             <div className="space-y-6">
               <div className="dark:bg-gray-800/50 bg-white/50 backdrop-blur-sm p-6 rounded-xl border dark:border-gray-700 border-gray-200 hover:dark:bg-gray-800/70 hover:bg-white/70 transition-all duration-300">
                 <div className="flex items-center gap-4">
@@ -909,7 +907,6 @@ const Portfolio = () => {
               </div>
             </div>
             
-            {/* Right Column - Social Links and CTA */}
             <div className="dark:bg-gray-800/50 bg-white/50 backdrop-blur-sm p-8 rounded-xl border dark:border-gray-700 border-gray-200">
               <div className="text-center mb-8">
                 <h3 className="text-2xl font-semibold mb-4 dark:text-gray-300 text-gray-700">Let's Connect</h3>
@@ -947,11 +944,9 @@ const Portfolio = () => {
         </div>
       </section>
 
-        {/* Footer */}
         <footer className="relative z-10 dark:bg-gray-900/95 bg-white/95 backdrop-blur-sm border-t dark:border-gray-700 border-gray-200 py-12">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid md:grid-cols-3 gap-8 mb-8">
-            {/* Left Column - Brand */}
             <div className="text-center md:text-left">
               <h3 className="text-xl font-semibold mb-2 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
                 Udavin Wijesundara
@@ -961,7 +956,6 @@ const Portfolio = () => {
               </p>
             </div>
             
-            {/* Center Column - Quick Links */}
             <div className="text-center">
               <h4 className="font-medium dark:text-gray-300 text-gray-700 mb-3">Quick Links</h4>
               <div className="flex justify-center space-x-6 text-sm">
@@ -977,7 +971,6 @@ const Portfolio = () => {
               </div>
             </div>
             
-            {/* Right Column - Social Links */}
             <div className="text-center md:text-right">
               <h4 className="font-medium dark:text-gray-300 text-gray-700 mb-3">Connect</h4>
               <div className="flex justify-center md:justify-end space-x-3">
@@ -997,7 +990,6 @@ const Portfolio = () => {
             </div>
           </div>
           
-          {/* Divider */}
           <div className="border-t dark:border-gray-700 border-gray-200 pt-6">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm dark:text-gray-400 text-gray-600">
               <p>
@@ -1035,7 +1027,6 @@ const Portfolio = () => {
       </footer>
       </div>
 
-      {/* Custom CSS for animations */}
       <style jsx>{`
         @keyframes gradientShift {
           0%, 100% {

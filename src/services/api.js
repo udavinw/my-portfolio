@@ -1,8 +1,11 @@
 import axios from 'axios';
 
+// Get backend URL from environment variables (required for Create React App: REACT_APP_ prefix)
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
 // Create axios instance with base configuration
 const api = axios.create({
-  baseURL: 'https://phortfolio-backend-uw-42cb62b1475d.herokuapp.com/',
+  baseURL: BACKEND_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

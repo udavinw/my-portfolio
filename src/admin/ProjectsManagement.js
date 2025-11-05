@@ -14,7 +14,8 @@ import {
   Tag,
   MoreVertical,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Star
 } from 'lucide-react';
 import { projectsAPI } from '../services/api';
 
@@ -31,7 +32,8 @@ const ProjectsManagement = () => {
     tech: '',
     github: '',
     live: '',
-    image: null
+    image: null,
+    featured: false
   });
   const [message, setMessage] = useState({ type: '', text: '' });
 
@@ -74,18 +76,19 @@ const ProjectsManagement = () => {
       formDataToSend.append('tech', formData.tech);
       formDataToSend.append('github', formData.github);
       formDataToSend.append('live', formData.live);
+      formDataToSend.append('featured', formData.featured);
       if (formData.image) {
         formDataToSend.append('image', formData.image);
       }
 
       const response = await projectsAPI.create(formDataToSend);
       setProjects([...projects, response.data.project]);
-      setMessage({ type: 'success', text: 'Project added successfully!' });
+            setMessage({ type: 'success', text: 'Project added successfully!' });     
       setShowAddModal(false);
-      setFormData({ title: '', description: '', tech: '', github: '', live: '', image: null });
+      setFormData({ title: '', description: '', tech: '', github: '', live: '', image: null, featured: false });
     } catch (error) {
       console.error('Error adding project:', error);
-      setMessage({ type: 'error', text: error.response?.data?.msg || 'Failed to add project' });
+      setMessage({ type: 'error', text: error.response?.data?.msg || 'Failed to add project' });                                                                
     } finally {
       setLoading(false);
     }
@@ -99,7 +102,8 @@ const ProjectsManagement = () => {
       tech: project.tech.join(', '),
       github: project.github,
       live: project.live,
-      image: null
+      image: null,
+      featured: project.featured || false
     });
     setShowAddModal(true);
   };
@@ -130,6 +134,7 @@ const ProjectsManagement = () => {
       formDataToSend.append('tech', formData.tech);
       formDataToSend.append('github', formData.github);
       formDataToSend.append('live', formData.live);
+      formDataToSend.append('featured', formData.featured);
       if (formData.image) {
         formDataToSend.append('image', formData.image);
       }
@@ -139,13 +144,13 @@ const ProjectsManagement = () => {
       setProjects(projects.map(project =>
         getProjectId(project) === editingId ? response.data.project : project
       ));
-      setMessage({ type: 'success', text: 'Project updated successfully!' });
+            setMessage({ type: 'success', text: 'Project updated successfully!' });   
       setShowAddModal(false);
       setEditingProject(null);
-      setFormData({ title: '', description: '', tech: '', github: '', live: '', image: null });
+      setFormData({ title: '', description: '', tech: '', github: '', live: '', image: null, featured: false });
     } catch (error) {
       console.error('Error updating project:', error);
-      setMessage({ type: 'error', text: error.response?.data?.msg || 'Failed to update project' });
+      setMessage({ type: 'error', text: error.response?.data?.msg || 'Failed to update project' });                                                             
     } finally {
       setLoading(false);
     }
@@ -228,6 +233,12 @@ const ProjectsManagement = () => {
             >
               {/* Project Image */}
               <div className="relative h-48 bg-gradient-to-br from-blue-100 to-purple-100">
+                {project.featured && (
+                  <div className="absolute top-3 left-3 z-10 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-2 py-1 rounded-full flex items-center gap-1 text-xs font-semibold shadow-lg">
+                    <Star size={10} fill="currentColor" />
+                    Featured
+                  </div>
+                )}
                 <img
                   src={project.imageUrl}
                   alt={project.title}
@@ -389,6 +400,19 @@ const ProjectsManagement = () => {
                   </div>
                 </div>
 
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="featured"
+                    checked={formData.featured}
+                    onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                    className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-2 focus:ring-blue-500"
+                  />
+                  <label htmlFor="featured" className="text-sm font-medium text-slate-700">
+                    Mark as Featured Project
+                  </label>
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Project Image</label>
                   <input
@@ -411,7 +435,7 @@ const ProjectsManagement = () => {
                     onClick={() => {
                       setShowAddModal(false);
                       setEditingProject(null);
-                      setFormData({ title: '', description: '', tech: '', github: '', live: '', image: null });
+                      setFormData({ title: '', description: '', tech: '', github: '', live: '', image: null, featured: false });
                     }}
                     className="flex-1 bg-slate-200 text-slate-700 py-2 px-4 rounded-lg hover:bg-slate-300 transition-colors"
                   >

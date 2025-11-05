@@ -5,6 +5,7 @@ import AdminDashboard from "./admin/AdminDashboard";
 import AdminLogin from "./admin/Login";
 import ProtectedRoute from "./admin/ProtectedRoute";
 import Preloader from "./Preloader";
+import ProjectsPage from "./ProjectsPage";
 import { useState, useEffect } from "react";
 
 function App() {
@@ -16,8 +17,8 @@ function App() {
       setFadeOut(true);
       setTimeout(() => {
         setLoading(false);
-      }, 800); // Match this with the CSS transition duration
-    }, 3000); // 3s preloader display time
+      }, 800);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -57,6 +58,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="/projects" element={<ProjectsPage />} />
             <Route path="/" element={<Portfolio />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

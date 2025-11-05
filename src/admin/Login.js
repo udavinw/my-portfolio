@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Lock, Mail, Eye, EyeOff, AlertCircle } from "lucide-react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { authAPI } from "../services/api";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -16,18 +16,15 @@ export default function AdminLogin() {
     setIsLoading(true);
     setError("");
 
-    try {
-      const res = await axios.post(
-        `https://phortfolio-backend-uw-42cb62b1475d.herokuapp.com/auth/login`,
-        { email, password }
-      );
-      
+        try {
+      const res = await authAPI.login(email, password);
+
       // Store token and user data
       localStorage.setItem("token", res.data.token);
       if (res.data.user) {
-        localStorage.setItem("userData", JSON.stringify(res.data.user));
+        localStorage.setItem("userData", JSON.stringify(res.data.user));        
       }
-      
+
       navigate("/admin/dashboard");
     } catch (err) {
       setError("Invalid credentials");
