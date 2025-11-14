@@ -114,10 +114,6 @@ export default function AdminLogin() {
                     <input type="checkbox" className="accent-pink-500" />
                     Remember me
                   </label>
-
-                  <button type="button" className="text-pink-400 hover:text-pink-300">
-                    Forgot password?
-                  </button>
                 </div>
 
                 {/* Login Button */}
@@ -138,7 +134,7 @@ export default function AdminLogin() {
               </div>
 
               <p className="text-center text-gray-500 text-xs mt-8">
-                © 2025 Admin Portal. Futuristic Mode Enabled ⚡
+                © {new Date().getFullYear()} Udavin Wijesundara . All rights reserved.
               </p>
             </div>
           </div>
