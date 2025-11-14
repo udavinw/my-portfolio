@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet';
-import { Github, Linkedin, Mail, ExternalLink, Code, Briefcase, User, Download, ChevronDown, Star, Moon, Sun, Menu, X, Twitter, Instagram, Facebook } from 'lucide-react';
+import { Github, Linkedin, Mail, ExternalLink, Code, Briefcase, User, Download, ChevronDown, Star, Moon, Sun, Menu, X, Twitter, Instagram, Facebook, Youtube } from 'lucide-react';
 import { 
   Code2, 
   FileText, 
@@ -122,6 +122,7 @@ const Portfolio = () => {
             : (typeof p.tech === 'string' ? p.tech.split(',').map(t => t.trim()).filter(Boolean) : []),                                                         
           github: p.github,
           live: p.live,
+          youtubeUrl: p.youtubeUrl,
           image: p.imageUrl || p.image || '',
           featured: p.featured || false,
         }));
@@ -792,6 +793,17 @@ const Portfolio = () => {
                         <ExternalLink size={16} className="mr-1" />
                         Live Demo
                       </a>
+                      {project.youtubeUrl && (
+                        <a
+                          href={project.youtubeUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center dark:text-gray-400 text-gray-600 hover:dark:text-white hover:text-black transition-colors duration-300"
+                        >
+                          <Youtube size={16} className="mr-1" />
+                          View in Demo Video
+                        </a>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -124,20 +124,20 @@ const AdminHeader = ({ onMenuClick, activeSection, navigationItems, setActiveSec
   }, []);
 
   return (
-    <header className="bg-white/80 backdrop-blur-xl border-b border-slate-200/60 shadow-sm sticky top-0 z-30">
+    <header className="backdrop-blur-2xl bg-white/10 border-b border-white/20 shadow-lg sticky top-0 z-30">
       <div className="px-6 py-4 lg:px-8">
         <div className="flex items-center justify-between">
           {/* Left side */}
           <div className="flex items-center gap-4">
             <button
               onClick={onMenuClick}
-              className="lg:hidden p-2 rounded-lg bg-slate-100 hover:bg-slate-200 transition-colors"
+              className="lg:hidden p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 transition-colors"
             >
-              <Menu className="w-5 h-5 text-slate-600" />
+              <Menu className="w-5 h-5 text-white" />
             </button>
 
             <div className="hidden lg:block">
-              <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
+              <h1 className="text-2xl font-bold text-white flex items-center gap-3 drop-shadow">
                 {currentSection && (
                   <>
                     <currentSection.icon className={`w-6 h-6 ${currentSection.color}`} />
@@ -145,7 +145,7 @@ const AdminHeader = ({ onMenuClick, activeSection, navigationItems, setActiveSec
                   </>
                 )}
               </h1>
-              <p className="text-sm text-slate-500 mt-1">
+              <p className="text-sm text-gray-300 mt-1">
                 Manage your portfolio content
               </p>
             </div>
@@ -154,11 +154,11 @@ const AdminHeader = ({ onMenuClick, activeSection, navigationItems, setActiveSec
           {/* Center - Search (hidden on mobile) */}
           <div className="hidden md:flex flex-1 max-w-md mx-8">
             <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search projects, experiences..."
-                className="w-full pl-10 pr-4 py-2 bg-slate-100 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
               />
             </div>
           </div>
@@ -169,25 +169,25 @@ const AdminHeader = ({ onMenuClick, activeSection, navigationItems, setActiveSec
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center gap-3 p-2 rounded-lg bg-slate-100 hover:bg-slate-200 transition-colors"
+                className="flex items-center gap-3 p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 transition-colors"
               >
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
                   <User className="w-4 h-4 text-white" />
                 </div>
                 <div className="hidden md:block text-left">
                   {userLoading ? (
                     <div className="space-y-1">
-                      <div className="h-4 w-20 bg-slate-200 rounded animate-pulse"></div>
-                      <div className="h-3 w-24 bg-slate-200 rounded animate-pulse"></div>
+                      <div className="h-4 w-20 bg-white/20 rounded animate-pulse"></div>
+                      <div className="h-3 w-24 bg-white/20 rounded animate-pulse"></div>
                     </div>
                   ) : (
                     <>
-                      <p className="text-sm font-medium text-slate-800">{user.name}</p>
-                      <p className="text-xs text-slate-500">{user.email}</p>
+                      <p className="text-sm font-medium text-white">{user.name}</p>
+                      <p className="text-xs text-gray-300">{user.email}</p>
                     </>
                   )}
                 </div>
-                <ChevronDown className="w-4 h-4 text-slate-500" />
+                <ChevronDown className="w-4 h-4 text-gray-300" />
               </button>
 
               {/* Dropdown menu */}
@@ -196,18 +196,18 @@ const AdminHeader = ({ onMenuClick, activeSection, navigationItems, setActiveSec
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
-                  className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-50"
+                  className="absolute right-0 mt-2 w-64 backdrop-blur-2xl bg-white/10 border border-white/20 rounded-xl shadow-lg py-2 z-50"
                 >
-                  <div className="px-4 py-3 border-b border-slate-100">
+                  <div className="px-4 py-3 border-b border-white/20">
                     {userLoading ? (
                       <div className="space-y-2">
-                        <div className="h-4 w-24 bg-slate-200 rounded animate-pulse"></div>
-                        <div className="h-3 w-32 bg-slate-200 rounded animate-pulse"></div>
+                        <div className="h-4 w-24 bg-white/20 rounded animate-pulse"></div>
+                        <div className="h-3 w-32 bg-white/20 rounded animate-pulse"></div>
                       </div>
                     ) : (
                       <>
-                        <p className="text-sm font-medium text-slate-800">{user.name}</p>
-                        <p className="text-xs text-slate-500">{user.email}</p>
+                        <p className="text-sm font-medium text-white">{user.name}</p>
+                        <p className="text-xs text-gray-300">{user.email}</p>
                       </>
                     )}
                   </div>
@@ -215,15 +215,15 @@ const AdminHeader = ({ onMenuClick, activeSection, navigationItems, setActiveSec
                   <div className="py-2">
                     <button 
                       onClick={handleProfileClick}
-                      className="w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-3"
+                      className="w-full px-4 py-2 text-left text-sm text-gray-200 hover:bg-white/10 flex items-center gap-3 transition-colors"
                     >
                       <User className="w-4 h-4" />
                       Profile Settings
                     </button>
-                    <div className="border-t border-slate-100 my-2"></div>
+                    <div className="border-t border-white/20 my-2"></div>
                     <button 
                       onClick={handleLogout}
-                      className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-3"
+                      className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-500/20 flex items-center gap-3 transition-colors"
                     >
                       <LogOut className="w-4 h-4" />
                       Sign Out

@@ -28,6 +28,7 @@ const EducationManagement = () => {
     achievements: ''
   });
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [deleteConfirm, setDeleteConfirm] = useState({ show: false, educationId: null, educationTitle: '' });
 
   // Fetch educations from API
   useEffect(() => {
@@ -85,19 +86,23 @@ const EducationManagement = () => {
     setShowAddModal(true);
   };
 
-  const handleDeleteEducation = async (educationId) => {
-    if (window.confirm('Are you sure you want to delete this education entry?')) {
-      try {
-        setLoading(true);
-        await educationAPI.delete(educationId);
-        setEducations(educations.filter(edu => edu.educationId !== educationId));
-        setMessage({ type: 'success', text: 'Education deleted successfully!' });
-      } catch (error) {
-        console.error('Error deleting education:', error);
-        setMessage({ type: 'error', text: error.response?.data?.msg || 'Failed to delete education' });
-      } finally {
-        setLoading(false);
-      }
+  const handleDeleteEducation = (educationId) => {
+    const education = educations.find(edu => edu.educationId === educationId);
+    setDeleteConfirm({ show: true, educationId, educationTitle: `${education?.degree} from ${education?.institution}` || 'this education entry' });
+  };
+
+  const confirmDelete = async () => {
+    try {
+      setLoading(true);
+      await educationAPI.delete(deleteConfirm.educationId);
+      setEducations(educations.filter(edu => edu.educationId !== deleteConfirm.educationId));
+      setMessage({ type: 'success', text: 'Education deleted successfully!' });
+      setDeleteConfirm({ show: false, educationId: null, educationTitle: '' });
+    } catch (error) {
+      console.error('Error deleting education:', error);
+      setMessage({ type: 'error', text: error.response?.data?.msg || 'Failed to delete education' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -128,7 +133,7 @@ const EducationManagement = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
       </div>
     );
   }
@@ -138,12 +143,12 @@ const EducationManagement = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Education Management</h1>
-          <p className="text-slate-600">Manage your educational background</p>
+          <h1 className="text-2xl font-bold text-white drop-shadow">Education Management</h1>
+          <p className="text-gray-300">Manage your educational background</p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-600 to-purple-600 text-white rounded-lg hover:scale-105 transition-all shadow-lg shadow-pink-500/30"
         >
           <Plus className="w-4 h-4" />
           Add Education
@@ -155,10 +160,10 @@ const EducationManagement = () => {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`p-4 rounded-lg flex items-center gap-3 ${
+          className={`p-4 rounded-lg flex items-center gap-3 backdrop-blur-sm ${
             message.type === 'success' 
-              ? 'bg-green-50 text-green-700 border border-green-200' 
-              : 'bg-red-50 text-red-700 border border-red-200'
+              ? 'bg-green-500/20 text-green-300 border border-green-500/40' 
+              : 'bg-red-500/20 text-red-300 border border-red-500/40'
           }`}
         >
           {message.type === 'success' ? (
@@ -172,13 +177,13 @@ const EducationManagement = () => {
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
-        <input
-          type="text"
-          placeholder="Search education..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search education..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
         />
       </div>
 
@@ -192,7 +197,7 @@ const EducationManagement = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-lg transition-all duration-300"
+              className="backdrop-blur-2xl bg-white/10 border border-white/20 rounded-xl shadow-lg p-6 hover:shadow-xl hover:scale-[1.02] transition-all duration-300"
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4 flex-1">
@@ -202,14 +207,14 @@ const EducationManagement = () => {
                   
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-lg font-semibold text-slate-800">{education.degree}</h3>
-                      <span className="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full">
+                      <h3 className="text-lg font-semibold text-white">{education.degree}</h3>
+                      <span className="px-2 py-1 bg-purple-500/30 text-purple-300 text-xs rounded-full border border-purple-400/30">
                         Completed
                       </span>
                     </div>
-                    <p className="text-purple-600 font-medium mb-2">{education.institution}</p>
+                    <p className="text-pink-400 font-medium mb-2">{education.institution}</p>
                     
-                    <div className="flex items-center gap-4 text-sm text-slate-500 mb-3">
+                    <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
                       <div className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
                         {education.duration}
@@ -218,12 +223,12 @@ const EducationManagement = () => {
                     
                     {education.achievements.length > 0 && (
                       <div className="mb-3">
-                        <p className="text-sm font-medium text-slate-700 mb-2">Achievements:</p>
+                        <p className="text-sm font-medium text-gray-300 mb-2">Achievements:</p>
                         <div className="flex flex-wrap gap-2">
                           {education.achievements.map((achievement, achievementIndex) => (
                             <span
                               key={achievementIndex}
-                              className="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full flex items-center gap-1"
+                              className="px-2 py-1 bg-yellow-500/30 text-yellow-300 text-xs rounded-full flex items-center gap-1 border border-yellow-400/30"
                             >
                               <Award className="w-3 h-3" />
                               {achievement}
@@ -238,13 +243,13 @@ const EducationManagement = () => {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleEditEducation(education)}
-                    className="p-2 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    className="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors border border-transparent hover:border-white/20"
                   >
                     <Edit className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleDeleteEducation(education.educationId)}
-                    className="p-2 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    className="p-2 text-gray-300 hover:text-red-400 hover:bg-red-500/20 rounded-lg transition-colors border border-transparent hover:border-red-500/30"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -262,61 +267,61 @@ const EducationManagement = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50"
             onClick={() => setShowAddModal(false)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-2xl p-6 w-full max-w-2xl"
+              className="backdrop-blur-2xl bg-white/10 border border-white/20 rounded-2xl p-6 w-full max-w-2xl shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="text-xl font-bold text-slate-800 mb-6">
+              <h2 className="text-xl font-bold text-white mb-6 drop-shadow">
                 {editingEducation ? 'Edit Education' : 'Add New Education'}
               </h2>
 
               <form onSubmit={editingEducation ? handleUpdateEducation : handleAddEducation} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Institution</label>
-                  <input
-                    type="text"
-                    value={formData.institution}
-                    onChange={(e) => setFormData({ ...formData, institution: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 placeholder-slate-400"
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Institution</label>
+                    <input
+                      type="text"
+                      value={formData.institution}
+                      onChange={(e) => setFormData({ ...formData, institution: e.target.value })}
+                      className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Degree/Certificate</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Degree/Certificate</label>
                   <input
                     type="text"
                     value={formData.degree}
                     onChange={(e) => setFormData({ ...formData, degree: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 placeholder-slate-400"
+                    className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Duration</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Duration</label>
                   <input
                     type="text"
                     value={formData.duration}
                     onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
                     placeholder="e.g., 2018 - 2022, 2020, Jan 2019 - Dec 2019"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 placeholder-slate-400"
+                    className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Achievements (comma separated)</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Achievements (comma separated)</label>
                   <textarea
                     value={formData.achievements}
                     onChange={(e) => setFormData({ ...formData, achievements: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 placeholder-slate-400"
+                    className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
                     rows="3"
                     placeholder="Dean's List, Summa Cum Laude, President of CS Club"
                   />
@@ -325,7 +330,7 @@ const EducationManagement = () => {
                 <div className="flex gap-3 pt-4">
                   <button
                     type="submit"
-                    className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex-1 bg-gradient-to-r from-pink-600 to-purple-600 text-white py-2 px-4 rounded-lg hover:scale-105 transition-all shadow-lg shadow-pink-500/30"
                   >
                     {editingEducation ? 'Update Education' : 'Add Education'}
                   </button>
@@ -336,12 +341,62 @@ const EducationManagement = () => {
                       setEditingEducation(null);
                       setFormData({ institution: '', degree: '', duration: '', achievements: '' });
                     }}
-                    className="flex-1 bg-slate-200 text-slate-700 py-2 px-4 rounded-lg hover:bg-slate-300 transition-colors"
+                    className="flex-1 bg-white/10 text-white py-2 px-4 rounded-lg hover:bg-white/20 border border-white/20 transition-colors"
                   >
                     Cancel
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {deleteConfirm.show && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            onClick={() => setDeleteConfirm({ show: false, educationId: null, educationTitle: '' })}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="backdrop-blur-2xl bg-white/10 border border-white/20 rounded-2xl p-6 w-full max-w-md shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center border border-red-500/40">
+                  <AlertCircle className="w-6 h-6 text-red-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Delete Education</h3>
+                  <p className="text-gray-300 text-sm">This action cannot be undone</p>
+                </div>
+              </div>
+              
+              <p className="text-gray-300 mb-6">
+                Are you sure you want to delete <span className="font-semibold text-white">"{deleteConfirm.educationTitle}"</span>? This will permanently remove the education entry from your portfolio.
+              </p>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={confirmDelete}
+                  className="flex-1 bg-gradient-to-r from-red-600 to-red-700 text-white py-2 px-4 rounded-lg hover:scale-105 transition-all shadow-lg shadow-red-500/30"
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={() => setDeleteConfirm({ show: false, educationId: null, educationTitle: '' })}
+                  className="flex-1 bg-white/10 text-white py-2 px-4 rounded-lg hover:bg-white/20 border border-white/20 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}

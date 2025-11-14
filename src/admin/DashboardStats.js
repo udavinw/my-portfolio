@@ -180,12 +180,12 @@ const DashboardStats = ({ stats = {}, loading = false }) => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white relative overflow-hidden"
+        className="backdrop-blur-2xl bg-white/10 border border-white/20 rounded-2xl p-8 text-white relative overflow-hidden shadow-2xl"
       >
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] bg-[size:50px_50px] opacity-20"></div>
         <div className="relative">
-          <h1 className="text-3xl font-bold mb-2">Welcome back, Admin!</h1>
-          <p className="text-blue-100 mb-6">Here's what's happening with your portfolio today.</p>
+          <h1 className="text-3xl font-bold mb-2 drop-shadow">Welcome back, Admin! ✦</h1>
+          <p className="text-gray-300 mb-6">Here's what's happening with your portfolio today.</p>
         </div>
       </motion.div>
 
@@ -197,7 +197,7 @@ const DashboardStats = ({ stats = {}, loading = false }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300"
+            className="backdrop-blur-2xl bg-white/10 border border-white/20 rounded-2xl p-6 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300"
           >
             <div className="flex items-center justify-between mb-4">
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${stat.color} flex items-center justify-center shadow-lg`}>
@@ -206,20 +206,22 @@ const DashboardStats = ({ stats = {}, loading = false }) => {
               <div className="text-right">
                 {loading ? (
                   <div className="animate-pulse">
-                    <div className="h-8 w-12 bg-slate-200 rounded mb-2"></div>
-                    <div className="h-4 w-16 bg-slate-200 rounded"></div>
+                    <div className="h-8 w-12 bg-white/20 rounded mb-2"></div>
+                    <div className="h-4 w-16 bg-white/20 rounded"></div>
                   </div>
                 ) : (
                   <>
-                    <p className="text-2xl font-bold text-slate-800">{stat.value}</p>
-                    <p className="text-sm text-slate-500">{stat.title}</p>
+                    <p className="text-2xl font-bold text-white">{stat.value}</p>
+                    <p className="text-sm text-gray-300">{stat.title}</p>
                   </>
                 )}
               </div>
             </div>
             <div className="flex items-center justify-between">
-              <span className={`text-sm ${stat.changeColor}`}>{stat.change}</span>
-              <TrendingUp className="w-4 h-4 text-green-500" />
+              <span className={`text-sm ${
+                stat.changeColor === 'text-green-600' ? 'text-green-400' : 'text-gray-300'
+              }`}>{stat.change}</span>
+              <TrendingUp className="w-4 h-4 text-green-400" />
             </div>
           </motion.div>
         ))}
@@ -231,23 +233,23 @@ const DashboardStats = ({ stats = {}, loading = false }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-slate-200/60"
+          className="lg:col-span-2 backdrop-blur-2xl bg-white/10 border border-white/20 rounded-2xl p-6 shadow-lg"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-slate-800">Recent Activity</h3>
-            <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">View all</button>
+            <h3 className="text-lg font-semibold text-white">Recent Activity</h3>
+            <button className="text-sm text-pink-400 hover:text-pink-300 font-medium transition-colors">View all</button>
           </div>
           <div className="space-y-4">
             {activityLoading ? (
               // Loading skeleton for recent activity
               Array.from({ length: 4 }).map((_, index) => (
                 <div key={index} className="flex items-center gap-4 p-3 rounded-lg">
-                  <div className="w-10 h-10 rounded-lg bg-slate-200 animate-pulse"></div>
+                  <div className="w-10 h-10 rounded-lg bg-white/20 animate-pulse"></div>
                   <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-slate-200 rounded animate-pulse"></div>
-                    <div className="h-3 bg-slate-200 rounded w-3/4 animate-pulse"></div>
+                    <div className="h-4 bg-white/20 rounded animate-pulse"></div>
+                    <div className="h-3 bg-white/20 rounded w-3/4 animate-pulse"></div>
                   </div>
-                  <div className="h-3 w-16 bg-slate-200 rounded animate-pulse"></div>
+                  <div className="h-3 w-16 bg-white/20 rounded animate-pulse"></div>
                 </div>
               ))
             ) : recentActivity.length > 0 ? (
@@ -257,28 +259,28 @@ const DashboardStats = ({ stats = {}, loading = false }) => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.5 + index * 0.1 }}
-                  className="flex items-center gap-4 p-3 rounded-lg hover:bg-slate-50 transition-colors"
+                  className="flex items-center gap-4 p-3 rounded-lg hover:bg-white/10 transition-colors border border-transparent hover:border-white/20"
                 >
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                    activity.type === 'project' ? 'bg-blue-100' :
-                    activity.type === 'experience' ? 'bg-green-100' :
-                    activity.type === 'education' ? 'bg-purple-100' :
-                    'bg-pink-100'
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center backdrop-blur-sm ${
+                    activity.type === 'project' ? 'bg-blue-500/30 border border-blue-400/30' :
+                    activity.type === 'experience' ? 'bg-green-500/30 border border-green-400/30' :
+                    activity.type === 'education' ? 'bg-purple-500/30 border border-purple-400/30' :
+                    'bg-pink-500/30 border border-pink-400/30'
                   }`}>
-                    {activity.type === 'project' && <FolderOpen className="w-5 h-5 text-blue-600" />}
-                    {activity.type === 'experience' && <Briefcase className="w-5 h-5 text-green-600" />}
-                    {activity.type === 'education' && <GraduationCap className="w-5 h-5 text-purple-600" />}
-                    {activity.type === 'testimonial' && <MessageSquare className="w-5 h-5 text-pink-600" />}
+                    {activity.type === 'project' && <FolderOpen className="w-5 h-5 text-blue-300" />}
+                    {activity.type === 'experience' && <Briefcase className="w-5 h-5 text-green-300" />}
+                    {activity.type === 'education' && <GraduationCap className="w-5 h-5 text-purple-300" />}
+                    {activity.type === 'testimonial' && <MessageSquare className="w-5 h-5 text-pink-300" />}
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-slate-800">{activity.action}</p>
-                    <p className="text-xs text-slate-500">{activity.item}</p>
+                    <p className="text-sm font-medium text-white">{activity.action}</p>
+                    <p className="text-xs text-gray-300">{activity.item}</p>
                   </div>
-                  <span className="text-xs text-slate-400">{activity.time}</span>
+                  <span className="text-xs text-gray-400">{activity.time}</span>
                 </motion.div>
               ))
             ) : (
-              <div className="text-center py-8 text-slate-500">
+              <div className="text-center py-8 text-gray-400">
                 <Activity className="w-8 h-8 mx-auto mb-2 opacity-50" />
                 <p className="text-sm">No recent activity</p>
               </div>
@@ -291,9 +293,9 @@ const DashboardStats = ({ stats = {}, loading = false }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/60"
+          className="backdrop-blur-2xl bg-white/10 border border-white/20 rounded-2xl p-6 shadow-lg"
         >
-          <h3 className="text-lg font-semibold text-slate-800 mb-6">Quick Actions</h3>
+          <h3 className="text-lg font-semibold text-white mb-6">Quick Actions</h3>
           <div className="space-y-3">
             {quickActions.map((action, index) => (
               <motion.button
@@ -301,7 +303,7 @@ const DashboardStats = ({ stats = {}, loading = false }) => {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.7 + index * 0.1 }}
-                className={`w-full flex items-center gap-3 p-3 rounded-lg text-white ${action.color} transition-all duration-200 hover:scale-105`}
+                className={`w-full flex items-center gap-3 p-3 rounded-lg text-white ${action.color} transition-all duration-200 hover:scale-105 shadow-lg`}
               >
                 <action.icon className="w-4 h-4" />
                 <span className="font-medium">{action.label}</span>

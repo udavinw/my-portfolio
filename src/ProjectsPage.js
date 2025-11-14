@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { Github, ExternalLink, Star, Menu, X } from 'lucide-react';
+import { Github, ExternalLink, Star, Menu, X, Youtube } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { projectsAPI } from './services/api';
 
@@ -57,6 +57,7 @@ const ProjectsPage = () => {
       : (typeof p.tech === 'string' ? p.tech.split(',').map(t => t.trim()).filter(Boolean) : []),
     github: p.github,
     live: p.live,
+    youtubeUrl: p.youtubeUrl,
     image: p.imageUrl || p.image || '',
     featured: p.featured || false,
   }));
@@ -212,6 +213,17 @@ const ProjectsPage = () => {
                         >
                           <ExternalLink size={16} className="mr-1" />
                           Live Demo
+                        </a>
+                      )}
+                      {project.youtubeUrl && (
+                        <a
+                          href={project.youtubeUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`flex items-center ${darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-black'} transition-colors duration-300`}
+                        >
+                          <Youtube size={16} className="mr-1" />
+                          View in Demo Video
                         </a>
                       )}
                     </div>

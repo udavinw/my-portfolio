@@ -116,8 +116,8 @@ const ProfileManagement = () => {
     <div className="max-w-4xl mx-auto space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-800">Profile Management</h1>
-        <p className="text-slate-600">Update your account information and security settings</p>
+        <h1 className="text-2xl font-bold text-white drop-shadow">Profile Management</h1>
+        <p className="text-gray-300">Update your account information and security settings</p>
       </div>
 
       {/* Profile Form */}
@@ -126,18 +126,18 @@ const ProfileManagement = () => {
         animate={{ opacity: 1, x: 0 }}
         className="max-w-2xl mx-auto"
       >
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-            <h3 className="text-lg font-semibold text-slate-800 mb-6">Account Information</h3>
+          <div className="backdrop-blur-2xl bg-white/10 border border-white/20 rounded-2xl shadow-lg p-6">
+            <h3 className="text-lg font-semibold text-white mb-6 drop-shadow">Account Information</h3>
 
             {/* Message */}
             {message.text && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`mb-6 p-4 rounded-lg flex items-center gap-3 ${
+                className={`mb-6 p-4 rounded-lg flex items-center gap-3 backdrop-blur-sm ${
                   message.type === 'success' 
-                    ? 'bg-green-50 text-green-700 border border-green-200' 
-                    : 'bg-red-50 text-red-700 border border-red-200'
+                    ? 'bg-green-500/20 text-green-300 border border-green-500/40' 
+                    : 'bg-red-500/20 text-red-300 border border-red-500/40'
                 }`}
               >
                 {message.type === 'success' ? (
@@ -152,31 +152,31 @@ const ProfileManagement = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Basic Information */}
               <div className="space-y-4">
-                <h4 className="text-md font-medium text-slate-700 flex items-center gap-2">
-                  <User className="w-4 h-4" />
-                  Basic Information
-                </h4>
-                
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={user.name}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 placeholder-slate-400"
+                  <h4 className="text-md font-medium text-white flex items-center gap-2">
+                    <User className="w-4 h-4" />
+                    Basic Information
+                  </h4>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Full Name</label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={user.name}
+                      onChange={handleInputChange}
+                      className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Email Address</label>
                   <input
                     type="email"
                     name="email"
                     value={user.email}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 placeholder-slate-400"
+                    className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
                     required
                   />
                 </div>
@@ -184,26 +184,26 @@ const ProfileManagement = () => {
 
               {/* Password Section */}
               <div className="space-y-4">
-                <h4 className="text-md font-medium text-slate-700 flex items-center gap-2">
-                  <Lock className="w-4 h-4" />
-                  Security Settings
-                </h4>
-                
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Current Password</label>
-                  <div className="relative">
-                    <input
-                      type={showPasswords.current ? 'text' : 'password'}
-                      name="currentPassword"
-                      value={user.currentPassword}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 pr-10 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 placeholder-slate-400"
+                  <h4 className="text-md font-medium text-white flex items-center gap-2">
+                    <Lock className="w-4 h-4" />
+                    Security Settings
+                  </h4>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Current Password</label>
+                    <div className="relative">
+                      <input
+                        type={showPasswords.current ? 'text' : 'password'}
+                        name="currentPassword"
+                        value={user.currentPassword}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 pr-10 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
                       placeholder="Enter current password"
                     />
                     <button
                       type="button"
                       onClick={() => togglePasswordVisibility('current')}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200"
                     >
                       {showPasswords.current ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -211,20 +211,20 @@ const ProfileManagement = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">New Password</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">New Password</label>
                   <div className="relative">
                     <input
                       type={showPasswords.new ? 'text' : 'password'}
                       name="newPassword"
                       value={user.newPassword}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 pr-10 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 placeholder-slate-400"
+                      className="w-full px-3 py-2 pr-10 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
                       placeholder="Enter new password"
                     />
                     <button
                       type="button"
                       onClick={() => togglePasswordVisibility('new')}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200"
                     >
                       {showPasswords.new ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -232,20 +232,20 @@ const ProfileManagement = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Confirm New Password</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Confirm New Password</label>
                   <div className="relative">
                     <input
                       type={showPasswords.confirm ? 'text' : 'password'}
                       name="confirmPassword"
                       value={user.confirmPassword}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 pr-10 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 placeholder-slate-400"
+                      className="w-full px-3 py-2 pr-10 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
                       placeholder="Confirm new password"
                     />
                     <button
                       type="button"
                       onClick={() => togglePasswordVisibility('confirm')}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200"
                     >
                       {showPasswords.confirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -254,11 +254,11 @@ const ProfileManagement = () => {
               </div>
 
               {/* Submit Button */}
-              <div className="pt-6 border-t border-slate-200">
+              <div className="pt-6 border-t border-white/20">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-600 to-purple-600 text-white rounded-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-pink-500/30"
                 >
                   {loading ? (
                     <>

@@ -28,6 +28,7 @@ const ExperienceManagement = () => {
     description: ''
   });
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [deleteConfirm, setDeleteConfirm] = useState({ show: false, experienceId: null, experienceTitle: '' });
 
   // Fetch experiences from API
   useEffect(() => {
@@ -81,19 +82,23 @@ const ExperienceManagement = () => {
     setShowAddModal(true);
   };
 
-  const handleDeleteExperience = async (experienceId) => {
-    if (window.confirm('Are you sure you want to delete this experience?')) {
-      try {
-        setLoading(true);
-        await experienceAPI.delete(experienceId);
-        setExperiences(experiences.filter(exp => exp.experienceId !== experienceId));
-        setMessage({ type: 'success', text: 'Experience deleted successfully!' });
-      } catch (error) {
-        console.error('Error deleting experience:', error);
-        setMessage({ type: 'error', text: error.response?.data?.msg || 'Failed to delete experience' });
-      } finally {
-        setLoading(false);
-      }
+  const handleDeleteExperience = (experienceId) => {
+    const experience = experiences.find(exp => exp.experienceId === experienceId);
+    setDeleteConfirm({ show: true, experienceId, experienceTitle: `${experience?.role} at ${experience?.company}` || 'this experience' });
+  };
+
+  const confirmDelete = async () => {
+    try {
+      setLoading(true);
+      await experienceAPI.delete(deleteConfirm.experienceId);
+      setExperiences(experiences.filter(exp => exp.experienceId !== deleteConfirm.experienceId));
+      setMessage({ type: 'success', text: 'Experience deleted successfully!' });
+      setDeleteConfirm({ show: false, experienceId: null, experienceTitle: '' });
+    } catch (error) {
+      console.error('Error deleting experience:', error);
+      setMessage({ type: 'error', text: error.response?.data?.msg || 'Failed to delete experience' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -120,7 +125,7 @@ const ExperienceManagement = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
       </div>
     );
   }
@@ -130,12 +135,12 @@ const ExperienceManagement = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Experience Management</h1>
-          <p className="text-slate-600">Manage your work experience</p>
+          <h1 className="text-2xl font-bold text-white drop-shadow">Experience Management</h1>
+          <p className="text-gray-300">Manage your work experience</p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-600 to-purple-600 text-white rounded-lg hover:scale-105 transition-all shadow-lg shadow-pink-500/30"
         >
           <Plus className="w-4 h-4" />
           Add Experience
@@ -147,10 +152,10 @@ const ExperienceManagement = () => {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`p-4 rounded-lg flex items-center gap-3 ${
+          className={`p-4 rounded-lg flex items-center gap-3 backdrop-blur-sm ${
             message.type === 'success' 
-              ? 'bg-green-50 text-green-700 border border-green-200' 
-              : 'bg-red-50 text-red-700 border border-red-200'
+              ? 'bg-green-500/20 text-green-300 border border-green-500/40' 
+              : 'bg-red-500/20 text-red-300 border border-red-500/40'
           }`}
         >
           {message.type === 'success' ? (
@@ -164,13 +169,13 @@ const ExperienceManagement = () => {
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
         <input
           type="text"
           placeholder="Search experiences..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
         />
       </div>
 
@@ -184,44 +189,44 @@ const ExperienceManagement = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-lg transition-all duration-300"
+              className="backdrop-blur-2xl bg-white/10 border border-white/20 rounded-xl shadow-lg p-6 hover:shadow-xl hover:scale-[1.02] transition-all duration-300"
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4 flex-1">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
                     <Building2 className="w-6 h-6 text-white" />
                   </div>
                   
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-lg font-semibold text-slate-800">{experience.role}</h3>
-                      <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">
+                      <h3 className="text-lg font-semibold text-white">{experience.role}</h3>
+                      <span className="px-2 py-1 bg-green-500/30 text-green-300 text-xs rounded-full border border-green-400/30">
                         Active
                       </span>
                     </div>
-                    <p className="text-blue-600 font-medium mb-2">{experience.company}</p>
+                    <p className="text-pink-400 font-medium mb-2">{experience.company}</p>
                     
-                    <div className="flex items-center gap-4 text-sm text-slate-500 mb-3">
+                    <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
                       <div className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
                         {experience.duration}
                       </div>
                     </div>
                     
-                    <p className="text-slate-600 text-sm leading-relaxed">{experience.description}</p>
+                    <p className="text-gray-300 text-sm leading-relaxed">{experience.description}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleEditExperience(experience)}
-                    className="p-2 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    className="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors border border-transparent hover:border-white/20"
                   >
                     <Edit className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleDeleteExperience(experience.experienceId)}
-                    className="p-2 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    className="p-2 text-gray-300 hover:text-red-400 hover:bg-red-500/20 rounded-lg transition-colors border border-transparent hover:border-red-500/30"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -239,62 +244,62 @@ const ExperienceManagement = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50"
             onClick={() => setShowAddModal(false)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-2xl p-6 w-full max-w-2xl"
+              className="backdrop-blur-2xl bg-white/10 border border-white/20 rounded-2xl p-6 w-full max-w-2xl shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="text-xl font-bold text-slate-800 mb-6">
+              <h2 className="text-xl font-bold text-white mb-6 drop-shadow">
                 {editingExperience ? 'Edit Experience' : 'Add New Experience'}
               </h2>
 
               <form onSubmit={editingExperience ? handleUpdateExperience : handleAddExperience} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Company</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Company</label>
                     <input
                       type="text"
                       value={formData.company}
                       onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 placeholder-slate-400"
+                      className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Role/Position</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Role/Position</label>
                     <input
                       type="text"
                       value={formData.role}
                       onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 placeholder-slate-400"
+                      className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
                       required
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Duration</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Duration</label>
                   <input
                     type="text"
                     value={formData.duration}
                     onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
                     placeholder="e.g., 2022 - Present, Jan 2020 - Dec 2022"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 placeholder-slate-400"
+                    className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Description</label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 placeholder-slate-400"
+                    className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
                     rows="4"
                     placeholder="Describe your responsibilities and achievements..."
                     required
@@ -304,7 +309,7 @@ const ExperienceManagement = () => {
                 <div className="flex gap-3 pt-4">
                   <button
                     type="submit"
-                    className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex-1 bg-gradient-to-r from-pink-600 to-purple-600 text-white py-2 px-4 rounded-lg hover:scale-105 transition-all shadow-lg shadow-pink-500/30"
                   >
                     {editingExperience ? 'Update Experience' : 'Add Experience'}
                   </button>
@@ -315,12 +320,62 @@ const ExperienceManagement = () => {
                       setEditingExperience(null);
                       setFormData({ company: '', role: '', duration: '', description: '' });
                     }}
-                    className="flex-1 bg-slate-200 text-slate-700 py-2 px-4 rounded-lg hover:bg-slate-300 transition-colors"
+                    className="flex-1 bg-white/10 text-white py-2 px-4 rounded-lg hover:bg-white/20 border border-white/20 transition-colors"
                   >
                     Cancel
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {deleteConfirm.show && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            onClick={() => setDeleteConfirm({ show: false, experienceId: null, experienceTitle: '' })}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="backdrop-blur-2xl bg-white/10 border border-white/20 rounded-2xl p-6 w-full max-w-md shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center border border-red-500/40">
+                  <AlertCircle className="w-6 h-6 text-red-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Delete Experience</h3>
+                  <p className="text-gray-300 text-sm">This action cannot be undone</p>
+                </div>
+              </div>
+              
+              <p className="text-gray-300 mb-6">
+                Are you sure you want to delete <span className="font-semibold text-white">"{deleteConfirm.experienceTitle}"</span>? This will permanently remove the experience from your portfolio.
+              </p>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={confirmDelete}
+                  className="flex-1 bg-gradient-to-r from-red-600 to-red-700 text-white py-2 px-4 rounded-lg hover:scale-105 transition-all shadow-lg shadow-red-500/30"
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={() => setDeleteConfirm({ show: false, experienceId: null, experienceTitle: '' })}
+                  className="flex-1 bg-white/10 text-white py-2 px-4 rounded-lg hover:bg-white/20 border border-white/20 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}

@@ -108,7 +108,17 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-black relative overflow-hidden">
+      {/* Animated neon floating blobs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="neon-circle top-[10%] left-[15%] w-72 h-72 bg-gradient-to-r from-purple-600 to-pink-500"></div>
+        <div className="neon-circle top-[60%] right-[5%] w-96 h-96 bg-gradient-to-r from-blue-600 to-cyan-400 animation-delay-2000"></div>
+        <div className="neon-circle bottom-[10%] left-[40%] w-64 h-64 bg-gradient-to-r from-indigo-500 to-purple-600 animation-delay-4000"></div>
+        <div className="floating-particle"></div>
+        <div className="floating-particle animation-delay-2000"></div>
+        <div className="floating-particle animation-delay-4000"></div>
+      </div>
+
       {/* Mobile sidebar overlay */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -116,18 +126,18 @@ const AdminDashboard = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+            className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm lg:hidden"
             onClick={() => setSidebarOpen(false)}
           />
         )}
       </AnimatePresence>
 
-      <div className="flex h-screen">
+      <div className="flex h-screen relative z-10">
         {/* Sidebar */}
         <motion.div
           initial={false}
           animate={{ x: isDesktop ? 0 : (sidebarOpen ? 0 : -280) }}
-          className="fixed inset-y-0 left-0 z-50 w-72 bg-white/95 backdrop-blur-xl border-r border-slate-200/60 shadow-2xl lg:translate-x-0 lg:static lg:inset-0"
+          className="fixed inset-y-0 left-0 z-50 w-72 backdrop-blur-2xl bg-white/10 border-r border-white/20 shadow-2xl lg:translate-x-0 lg:static lg:inset-0"
         >
           <AdminSidebar 
             navigationItems={navigationItems}
@@ -148,7 +158,7 @@ const AdminDashboard = () => {
           />
 
           {/* Page content */}
-          <main className="flex-1 overflow-y-auto bg-gradient-to-br from-slate-50/50 to-blue-50/50">
+          <main className="flex-1 overflow-y-auto">
             <div className="p-6 lg:p-8">
               <AnimatePresence mode="wait">
                 <motion.div
@@ -166,6 +176,45 @@ const AdminDashboard = () => {
           </main>
         </div>
       </div>
+
+      {/* ANIMATIONS */}
+      <style>{`
+        .neon-circle {
+          position: absolute;
+          border-radius: 9999px;
+          opacity: 0.35;
+          filter: blur(90px);
+          animation: floatBlob 14s infinite ease-in-out;
+        }
+        
+        @keyframes floatBlob {
+          0% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(40px, -60px) scale(1.2); }
+          66% { transform: translate(-30px, 40px) scale(0.9); }
+          100% { transform: translate(0, 0) scale(1); }
+        }
+
+        .floating-particle {
+          position: absolute;
+          width: 8px;
+          height: 8px;
+          background: white;
+          opacity: 0.15;
+          border-radius: 50%;
+          animation: particleFloat 10s infinite linear;
+          top: 50%;
+          left: 50%;
+        }
+
+        @keyframes particleFloat {
+          0% { transform: translate(0, 0) scale(1); opacity: 0.15; }
+          50% { transform: translate(200px, -150px) scale(0.5); opacity: 0.05; }
+          100% { transform: translate(-200px, 200px) scale(1); opacity: 0.15; }
+        }
+
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
+      `}</style>
     </div>
   );
 };

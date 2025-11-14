@@ -30,6 +30,7 @@ const TestimonialsManagement = () => {
     avatar: null
   });
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [deleteConfirm, setDeleteConfirm] = useState({ show: false, testimonialId: null, testimonialTitle: '' });
 
   // Fetch testimonials from API
   useEffect(() => {
@@ -94,19 +95,23 @@ const TestimonialsManagement = () => {
     setShowAddModal(true);
   };
 
-  const handleDeleteTestimonial = async (testimonialId) => {
-    if (window.confirm('Are you sure you want to delete this testimonial?')) {
-      try {
-        setLoading(true);
-        await testimonialsAPI.delete(testimonialId);
-        setTestimonials(testimonials.filter(test => test.testimonialId !== testimonialId));
-        setMessage({ type: 'success', text: 'Testimonial deleted successfully!' });
-      } catch (error) {
-        console.error('Error deleting testimonial:', error);
-        setMessage({ type: 'error', text: error.response?.data?.msg || 'Failed to delete testimonial' });
-      } finally {
-        setLoading(false);
-      }
+  const handleDeleteTestimonial = (testimonialId) => {
+    const testimonial = testimonials.find(test => test.testimonialId === testimonialId);
+    setDeleteConfirm({ show: true, testimonialId, testimonialTitle: `testimonial from ${testimonial?.name}` || 'this testimonial' });
+  };
+
+  const confirmDelete = async () => {
+    try {
+      setLoading(true);
+      await testimonialsAPI.delete(deleteConfirm.testimonialId);
+      setTestimonials(testimonials.filter(test => test.testimonialId !== deleteConfirm.testimonialId));
+      setMessage({ type: 'success', text: 'Testimonial deleted successfully!' });
+      setDeleteConfirm({ show: false, testimonialId: null, testimonialTitle: '' });
+    } catch (error) {
+      console.error('Error deleting testimonial:', error);
+      setMessage({ type: 'error', text: error.response?.data?.msg || 'Failed to delete testimonial' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -142,7 +147,7 @@ const TestimonialsManagement = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
       </div>
     );
   }
@@ -152,12 +157,12 @@ const TestimonialsManagement = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Testimonials Management</h1>
-          <p className="text-slate-600">Manage client testimonials and feedback</p>
+          <h1 className="text-2xl font-bold text-white drop-shadow">Testimonials Management</h1>
+          <p className="text-gray-300">Manage client testimonials and feedback</p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-600 to-purple-600 text-white rounded-lg hover:scale-105 transition-all shadow-lg shadow-pink-500/30"
         >
           <Plus className="w-4 h-4" />
           Add Testimonial
@@ -169,10 +174,10 @@ const TestimonialsManagement = () => {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`p-4 rounded-lg flex items-center gap-3 ${
+          className={`p-4 rounded-lg flex items-center gap-3 backdrop-blur-sm ${
             message.type === 'success' 
-              ? 'bg-green-50 text-green-700 border border-green-200' 
-              : 'bg-red-50 text-red-700 border border-red-200'
+              ? 'bg-green-500/20 text-green-300 border border-green-500/40' 
+              : 'bg-red-500/20 text-red-300 border border-red-500/40'
           }`}
         >
           {message.type === 'success' ? (
@@ -186,13 +191,13 @@ const TestimonialsManagement = () => {
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
-        <input
-          type="text"
-          placeholder="Search testimonials..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search testimonials..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
         />
       </div>
 
@@ -206,7 +211,7 @@ const TestimonialsManagement = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-lg transition-all duration-300"
+              className="backdrop-blur-2xl bg-white/10 border border-white/20 rounded-xl shadow-lg p-6 hover:shadow-xl hover:scale-[1.02] transition-all duration-300"
             >
               {/* Avatar and Actions */}
               <div className="flex items-start justify-between mb-4">
@@ -226,21 +231,21 @@ const TestimonialsManagement = () => {
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-slate-800">{testimonial.name}</h3>
-                    <p className="text-sm text-slate-500">{testimonial.role}</p>
+                    <h3 className="font-semibold text-white">{testimonial.name}</h3>
+                    <p className="text-sm text-gray-300">{testimonial.role}</p>
                   </div>
                 </div>
                 
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => handleEditTestimonial(testimonial)}
-                    className="p-2 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    className="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors border border-transparent hover:border-white/20"
                   >
                     <Edit className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleDeleteTestimonial(testimonial.testimonialId)}
-                    className="p-2 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    className="p-2 text-gray-300 hover:text-red-400 hover:bg-red-500/20 rounded-lg transition-colors border border-transparent hover:border-red-500/30"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -249,8 +254,8 @@ const TestimonialsManagement = () => {
 
               {/* Company */}
               <div className="flex items-center gap-2 mb-4">
-                <Building2 className="w-4 h-4 text-slate-400" />
-                <span className="text-sm text-slate-600">{testimonial.company}</span>
+                <Building2 className="w-4 h-4 text-gray-400" />
+                <span className="text-sm text-gray-300">{testimonial.company}</span>
               </div>
 
               {/* Feedback */}
@@ -260,13 +265,13 @@ const TestimonialsManagement = () => {
                     <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
                   ))}
                 </div>
-                <p className="text-slate-600 text-sm leading-relaxed italic">
+                <p className="text-gray-300 text-sm leading-relaxed italic">
                   "{testimonial.feedback}"
                 </p>
               </div>
 
               {/* Date */}
-              <div className="flex items-center gap-1 text-xs text-slate-500">
+              <div className="flex items-center gap-1 text-xs text-gray-400">
                 <Calendar className="w-3 h-3" />
                 {new Date(testimonial.createdAt).toLocaleDateString()}
               </div>
@@ -282,61 +287,61 @@ const TestimonialsManagement = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50"
             onClick={() => setShowAddModal(false)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-2xl p-6 w-full max-w-2xl"
+              className="backdrop-blur-2xl bg-white/10 border border-white/20 rounded-2xl p-6 w-full max-w-2xl shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="text-xl font-bold text-slate-800 mb-6">
+              <h2 className="text-xl font-bold text-white mb-6 drop-shadow">
                 {editingTestimonial ? 'Edit Testimonial' : 'Add New Testimonial'}
               </h2>
 
               <form onSubmit={editingTestimonial ? handleUpdateTestimonial : handleAddTestimonial} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Name</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Name</label>
                     <input
                       type="text"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 placeholder-slate-400"
+                      className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Company</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Company</label>
                     <input
                       type="text"
                       value={formData.company}
                       onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 placeholder-slate-400"
+                      className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
                       required
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Role/Position</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Role/Position</label>
                   <input
                     type="text"
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 placeholder-slate-400"
+                    className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Feedback</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Feedback</label>
                   <textarea
                     value={formData.feedback}
                     onChange={(e) => setFormData({ ...formData, feedback: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 placeholder-slate-400"
+                    className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
                     rows="4"
                     placeholder="Enter the testimonial feedback..."
                     required
@@ -344,19 +349,19 @@ const TestimonialsManagement = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Avatar Image</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Avatar Image</label>
                   <input
                     type="file"
                     accept="image/*"
                     onChange={(e) => setFormData({ ...formData, avatar: e.target.files[0] })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                    className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-pink-500/30 file:text-white hover:file:bg-pink-500/40"
                   />
                 </div>
 
                 <div className="flex gap-3 pt-4">
                   <button
                     type="submit"
-                    className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex-1 bg-gradient-to-r from-pink-600 to-purple-600 text-white py-2 px-4 rounded-lg hover:scale-105 transition-all shadow-lg shadow-pink-500/30"
                   >
                     {editingTestimonial ? 'Update Testimonial' : 'Add Testimonial'}
                   </button>
@@ -367,12 +372,62 @@ const TestimonialsManagement = () => {
                       setEditingTestimonial(null);
                       setFormData({ name: '', company: '', role: '', feedback: '', avatar: null });
                     }}
-                    className="flex-1 bg-slate-200 text-slate-700 py-2 px-4 rounded-lg hover:bg-slate-300 transition-colors"
+                    className="flex-1 bg-white/10 text-white py-2 px-4 rounded-lg hover:bg-white/20 border border-white/20 transition-colors"
                   >
                     Cancel
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {deleteConfirm.show && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            onClick={() => setDeleteConfirm({ show: false, testimonialId: null, testimonialTitle: '' })}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="backdrop-blur-2xl bg-white/10 border border-white/20 rounded-2xl p-6 w-full max-w-md shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center border border-red-500/40">
+                  <AlertCircle className="w-6 h-6 text-red-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Delete Testimonial</h3>
+                  <p className="text-gray-300 text-sm">This action cannot be undone</p>
+                </div>
+              </div>
+              
+              <p className="text-gray-300 mb-6">
+                Are you sure you want to delete <span className="font-semibold text-white">"{deleteConfirm.testimonialTitle}"</span>? This will permanently remove the testimonial from your portfolio.
+              </p>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={confirmDelete}
+                  className="flex-1 bg-gradient-to-r from-red-600 to-red-700 text-white py-2 px-4 rounded-lg hover:scale-105 transition-all shadow-lg shadow-red-500/30"
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={() => setDeleteConfirm({ show: false, testimonialId: null, testimonialTitle: '' })}
+                  className="flex-1 bg-white/10 text-white py-2 px-4 rounded-lg hover:bg-white/20 border border-white/20 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}

@@ -11,22 +11,22 @@ const AdminSidebar = ({ navigationItems, activeSection, setActiveSection, onClos
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="p-6 border-b border-slate-200/60">
+      <div className="p-6 border-b border-white/20">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+            <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
               <Shield className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-800">Portfolio Admin</h2>
-              <p className="text-xs text-slate-500">Management Dashboard</p>
+              <h2 className="text-lg font-bold text-white drop-shadow">Portfolio Admin</h2>
+              <p className="text-xs text-gray-300">Management Dashboard</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="lg:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors"
+            className="lg:hidden p-2 rounded-lg hover:bg-white/20 border border-white/20 transition-colors"
           >
-            <X className="w-4 h-4 text-slate-600" />
+            <X className="w-4 h-4 text-white" />
           </button>
         </div>
       </div>
@@ -43,8 +43,8 @@ const AdminSidebar = ({ navigationItems, activeSection, setActiveSection, onClos
               onClick={() => handleSectionChange(item.id)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
                 activeSection === item.id
-                  ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25'
-                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800'
+                  ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white shadow-lg shadow-pink-500/30'
+                  : 'text-gray-300 hover:bg-white/10 hover:text-white border border-transparent hover:border-white/20'
               }`}
             >
               <item.icon className={`w-5 h-5 ${

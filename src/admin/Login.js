@@ -16,15 +16,12 @@ export default function AdminLogin() {
     setIsLoading(true);
     setError("");
 
-        try {
+    try {
       const res = await authAPI.login(email, password);
-
-      // Store token and user data
       localStorage.setItem("token", res.data.token);
       if (res.data.user) {
-        localStorage.setItem("userData", JSON.stringify(res.data.user));        
+        localStorage.setItem("userData", JSON.stringify(res.data.user));
       }
-
       navigate("/admin/dashboard");
     } catch (err) {
       setError("Invalid credentials");
@@ -35,173 +32,166 @@ export default function AdminLogin() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-black relative overflow-hidden">
+
+        {/* ★ Animated neon floating blobs */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+          <div className="neon-circle top-[10%] left-[15%] w-72 h-72 bg-gradient-to-r from-purple-600 to-pink-500"></div>
+          <div className="neon-circle top-[60%] right-[5%] w-96 h-96 bg-gradient-to-r from-blue-600 to-cyan-400 animation-delay-2000"></div>
+          <div className="neon-circle bottom-[10%] left-[40%] w-64 h-64 bg-gradient-to-r from-indigo-500 to-purple-600 animation-delay-4000"></div>
+
+          {/* floating particles */}
+          <div className="floating-particle"></div>
+          <div className="floating-particle animation-delay-2000"></div>
+          <div className="floating-particle animation-delay-4000"></div>
         </div>
 
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+        {/* Center Card */}
+        <div className="relative w-full max-w-md z-20">
+          <div className="backdrop-blur-2xl bg-white/10 border border-white/20 shadow-2xl rounded-2xl p-10 relative overflow-hidden">
 
-        <div className="relative w-full max-w-md">
-          <div className="bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-700/50 p-8 relative overflow-hidden">
-            <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-500 rounded-full filter blur-3xl opacity-20"></div>
-            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-purple-500 rounded-full filter blur-3xl opacity-20"></div>
+            {/* Glow ring behind card */}
+            <div className="absolute inset-0 m-auto w-[350px] h-[350px] rounded-full bg-gradient-to-r from-purple-600 to-blue-500 opacity-20 blur-3xl"></div>
 
             <div className="relative">
-              <h2 className="text-2xl font-bold text-white mb-6 text-center">
-                Welcome Back
+              <h2 className="text-3xl font-bold text-white text-center tracking-wider mb-8 drop-shadow">
+                Welcome Back ✦
               </h2>
 
+              {/* Error */}
               {error && (
-                <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center gap-3 animate-shake">
-                  <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
-                  <p className="text-red-400 text-sm">{error}</p>
+                <div className="mb-6 p-4 rounded-lg bg-red-500/20 border border-red-500/40 flex items-center gap-3 animate-shake">
+                  <AlertCircle className="w-5 h-5 text-red-400" />
+                  <p className="text-red-300 text-sm">{error}</p>
                 </div>
               )}
 
-              <div className="space-y-5">
+              <div className="space-y-6">
+                {/* Email */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Email
-                  </label>
-                  <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Mail className="w-5 h-5 text-slate-400 group-focus-within:text-blue-400 transition-colors" />
-                    </div>
+                  <label className="text-sm text-gray-300">Email</label>
+                  <div className="relative mt-1">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5" />
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full pl-12 pr-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                      placeholder="admin@portfolio.com"
+                      className="w-full py-3 pl-12 pr-4 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-pink-500 outline-none transition"
+                      placeholder="admin@example.com"
                       required
                     />
                   </div>
                 </div>
 
+                {/* Password */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Password
-                  </label>
-                  <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Lock className="w-5 h-5 text-slate-400 group-focus-within:text-blue-400 transition-colors" />
-                    </div>
+                  <label className="text-sm text-gray-300">Password</label>
+                  <div className="relative mt-1">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5" />
+
                     <input
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full pl-12 pr-12 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      className="w-full py-3 pl-12 pr-12 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-pink-500 outline-none transition"
                       placeholder="••••••••"
                       required
                     />
+
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-white transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-200 transition"
                     >
-                      {showPassword ? (
-                        <EyeOff className="w-5 h-5" />
-                      ) : (
-                        <Eye className="w-5 h-5" />
-                      )}
+                      {showPassword ? <EyeOff /> : <Eye />}
                     </button>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <label className="flex items-center gap-2 cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      className="w-4 h-4 rounded bg-slate-800 border-slate-700 text-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0"
-                    />
-                    <span className="text-sm text-slate-400 group-hover:text-slate-300 transition-colors">
-                      Remember me
-                    </span>
+                {/* Actions */}
+                <div className="flex items-center justify-between text-sm text-gray-300">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" className="accent-pink-500" />
+                    Remember me
                   </label>
-                  <button
-                    type="button"
-                    className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
-                  >
+
+                  <button type="button" className="text-pink-400 hover:text-pink-300">
                     Forgot password?
                   </button>
                 </div>
 
+                {/* Login Button */}
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:from-blue-500 hover:to-purple-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full py-3 bg-gradient-to-r from-pink-600 to-purple-600 text-white font-semibold rounded-lg shadow-lg shadow-pink-500/30 hover:scale-[1.02] active:scale-95 transition disabled:opacity-50"
                 >
                   {isLoading ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <svg
-                        className="animate-spin h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                       Signing in...
-                    </span>
+                    </div>
                   ) : (
                     "Login"
                   )}
                 </button>
               </div>
 
-              <div className="mt-6 pt-6 border-t border-slate-700/50">
-                <p className="text-center text-sm text-slate-400">
-                  Protected by enterprise-grade security
-                </p>
-              </div>
+              <p className="text-center text-gray-500 text-xs mt-8">
+                © 2025 Admin Portal. Futuristic Mode Enabled ⚡
+              </p>
             </div>
           </div>
-
-          <p className="text-center text-slate-500 text-sm mt-6">
-            © 2025 Portfolio Admin. All rights reserved.
-          </p>
         </div>
-
-        <style>{`
-          @keyframes blob {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(30px, -50px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-          }
-          .animate-blob {
-            animation: blob 7s infinite;
-          }
-          .animation-delay-2000 {
-            animation-delay: 2s;
-          }
-          .animation-delay-4000 {
-            animation-delay: 4s;
-          }
-          @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-            20%, 40%, 60%, 80% { transform: translateX(5px); }
-          }
-          .animate-shake {
-            animation: shake 0.5s;
-          }
-        `}</style>
       </div>
+
+      {/* ANIMATIONS */}
+      <style>{`
+        .neon-circle {
+          position: absolute;
+          border-radius: 9999px;
+          opacity: 0.35;
+          filter: blur(90px);
+          animation: floatBlob 14s infinite ease-in-out;
+        }
+        
+        @keyframes floatBlob {
+          0% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(40px, -60px) scale(1.2); }
+          66% { transform: translate(-30px, 40px) scale(0.9); }
+          100% { transform: translate(0, 0) scale(1); }
+        }
+
+        .floating-particle {
+          position: absolute;
+          width: 8px;
+          height: 8px;
+          background: white;
+          opacity: 0.15;
+          border-radius: 50%;
+          animation: particleFloat 10s infinite linear;
+          top: 50%;
+          left: 50%;
+        }
+
+        @keyframes particleFloat {
+          0% { transform: translate(0, 0) scale(1); opacity: 0.15; }
+          50% { transform: translate(200px, -150px) scale(0.5); opacity: 0.05; }
+          100% { transform: translate(-200px, 200px) scale(1); opacity: 0.15; }
+        }
+
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
+
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          20% { transform: translateX(-6px); }
+          40% { transform: translateX(6px); }
+          60% { transform: translateX(-6px); }
+          80% { transform: translateX(6px); }
+        }
+        .animate-shake { animation: shake 0.4s ease; }
+      `}</style>
     </form>
   );
 }
