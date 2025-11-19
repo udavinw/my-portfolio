@@ -777,13 +777,17 @@ const Portfolio = () => {
                       ))}
                     </div>
                     <div className="flex space-x-4">
-                      {/* <a
-                        href={project.github}
-                        className="flex items-center dark:text-gray-400 text-gray-600 hover:dark:text-white hover:text-black transition-colors duration-300"
-                      >
-                        <Github size={16} className="mr-1" />
-                        Code
-                      </a> */}
+                      {project.github && (
+                        <a
+                          href={project.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center dark:text-gray-400 text-gray-600 hover:dark:text-white hover:text-black transition-colors duration-300"
+                        >
+                          <Github size={16} className="mr-1" />
+                          Code
+                        </a>
+                      )}
                       <a
                         href={project.live} 
                         target="_blank"
