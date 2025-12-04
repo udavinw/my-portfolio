@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Plus, 
-  Search, 
-  Edit, 
-  Trash2, 
+import {
+  Plus,
+  Search,
+  Edit,
+  Trash2,
   GraduationCap,
   Calendar,
   Award,
@@ -25,7 +25,8 @@ const EducationManagement = () => {
     institution: '',
     degree: '',
     duration: '',
-    achievements: ''
+    achievements: '',
+    order: ''
   });
   const [message, setMessage] = useState({ type: '', text: '' });
   const [deleteConfirm, setDeleteConfirm] = useState({ show: false, educationId: null, educationTitle: '' });
@@ -36,7 +37,9 @@ const EducationManagement = () => {
       try {
         setLoading(true);
         const response = await educationAPI.getAll();
-        setEducations(response.data);
+        // Sort by order if available
+        const sortedEducations = response.data.sort((a, b) => (a.order || 0) - (b.order || 0));
+        setEducations(sortedEducations);
       } catch (error) {
         console.error('Error fetching educations:', error);
         setMessage({ type: 'error', text: 'Failed to load educations' });
@@ -60,13 +63,15 @@ const EducationManagement = () => {
       setLoading(true);
       const educationData = {
         ...formData,
-        achievements: formData.achievements.split(',').map(a => a.trim()).filter(a => a)
+        achievements: formData.achievements.split(',').map(a => a.trim()).filter(a => a),
+        order: parseInt(formData.order) || 0
       };
       const response = await educationAPI.create(educationData);
-      setEducations([...educations, response.data.education]);
+      const newEducations = [...educations, response.data.education].sort((a, b) => (a.order || 0) - (b.order || 0));
+      setEducations(newEducations);
       setMessage({ type: 'success', text: 'Education added successfully!' });
       setShowAddModal(false);
-      setFormData({ institution: '', degree: '', duration: '', achievements: '' });
+      setFormData({ institution: '', degree: '', duration: '', achievements: '', order: '' });
     } catch (error) {
       console.error('Error adding education:', error);
       setMessage({ type: 'error', text: error.response?.data?.msg || 'Failed to add education' });
@@ -81,14 +86,18 @@ const EducationManagement = () => {
       institution: education.institution,
       degree: education.degree,
       duration: education.duration,
-      achievements: education.achievements.join(', ')
+      achievements: education.achievements.join(', '),
+      order: education.order || ''
     });
     setShowAddModal(true);
   };
 
-  const handleDeleteEducation = (educationId) => {
-    const education = educations.find(edu => edu.educationId === educationId);
-    setDeleteConfirm({ show: true, educationId, educationTitle: `${education?.degree} from ${education?.institution}` || 'this education entry' });
+  const handleDeleteEducation = (education) => {
+    setDeleteConfirm({
+      show: true,
+      educationId: education.educationId,
+      educationTitle: education.institution
+    });
   };
 
   const confirmDelete = async () => {
@@ -96,11 +105,11 @@ const EducationManagement = () => {
       setLoading(true);
       await educationAPI.delete(deleteConfirm.educationId);
       setEducations(educations.filter(edu => edu.educationId !== deleteConfirm.educationId));
-      setMessage({ type: 'success', text: 'Education deleted successfully!' });
+      setMessage({ type: 'success', text: 'Education deleted successfully' });
       setDeleteConfirm({ show: false, educationId: null, educationTitle: '' });
     } catch (error) {
       console.error('Error deleting education:', error);
-      setMessage({ type: 'error', text: error.response?.data?.msg || 'Failed to delete education' });
+      setMessage({ type: 'error', text: 'Failed to delete education' });
     } finally {
       setLoading(false);
     }
@@ -112,16 +121,19 @@ const EducationManagement = () => {
       setLoading(true);
       const educationData = {
         ...formData,
-        achievements: formData.achievements.split(',').map(a => a.trim()).filter(a => a)
+        achievements: formData.achievements.split(',').map(a => a.trim()).filter(a => a),
+        order: parseInt(formData.order) || 0
       };
       const response = await educationAPI.update(editingEducation.educationId, educationData);
-      setEducations(educations.map(edu => 
+      const updatedEducations = educations.map(edu =>
         edu.educationId === editingEducation.educationId ? response.data.education : edu
-      ));
+      ).sort((a, b) => (a.order || 0) - (b.order || 0));
+
+      setEducations(updatedEducations);
       setMessage({ type: 'success', text: 'Education updated successfully!' });
       setShowAddModal(false);
       setEditingEducation(null);
-      setFormData({ institution: '', degree: '', duration: '', achievements: '' });
+      setFormData({ institution: '', degree: '', duration: '', achievements: '', order: '' });
     } catch (error) {
       console.error('Error updating education:', error);
       setMessage({ type: 'error', text: error.response?.data?.msg || 'Failed to update education' });
@@ -130,126 +142,108 @@ const EducationManagement = () => {
     }
   };
 
-  if (loading) {
+  if (loading && educations.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500"></div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-white drop-shadow">Education Management</h1>
-          <p className="text-gray-300">Manage your educational background</p>
-        </div>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-600 to-purple-600 text-white rounded-lg hover:scale-105 transition-all shadow-lg shadow-pink-500/30"
-        >
-          <Plus className="w-4 h-4" />
-          Add Education
-        </button>
-      </div>
-
-      {/* Message Display */}
-      {message.text && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className={`p-4 rounded-lg flex items-center gap-3 backdrop-blur-sm ${
-            message.type === 'success' 
-              ? 'bg-green-500/20 text-green-300 border border-green-500/40' 
-              : 'bg-red-500/20 text-red-300 border border-red-500/40'
-          }`}
-        >
-          {message.type === 'success' ? (
-            <CheckCircle className="w-5 h-5" />
-          ) : (
-            <AlertCircle className="w-5 h-5" />
-          )}
-          <span className="text-sm font-medium">{message.text}</span>
-        </motion.div>
-      )}
-
-      {/* Search */}
-      <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+      {/* Header Actions */}
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white/5 p-4 rounded-xl border border-white/10 backdrop-blur-sm">
+        <div className="relative w-full md:w-96">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
             type="text"
             placeholder="Search education..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
-        />
+            className="w-full pl-10 pr-4 py-2 bg-black/20 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500/50"
+          />
+        </div>
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="w-full md:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-pink-600 to-purple-600 text-white px-6 py-2 rounded-lg hover:scale-105 transition-all shadow-lg shadow-pink-500/20"
+        >
+          <Plus className="w-5 h-5" />
+          Add Education
+        </button>
       </div>
 
+      {/* Message Alert */}
+      <AnimatePresence>
+        {message.text && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className={`p-4 rounded-lg flex items-center gap-2 ${message.type === 'success' ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'
+              }`}
+          >
+            {message.type === 'success' ? <CheckCircle className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+            {message.text}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Education List */}
-      <div className="space-y-4">
+      <div className="grid gap-4">
         <AnimatePresence>
-          {filteredEducations.map((education, index) => (
+          {filteredEducations.map((education) => (
             <motion.div
               key={education.educationId}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ delay: index * 0.1 }}
-              className="backdrop-blur-2xl bg-white/10 border border-white/20 rounded-xl shadow-lg p-6 hover:shadow-xl hover:scale-[1.02] transition-all duration-300"
+              layout
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="group relative bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-all"
             >
-              <div className="flex items-start justify-between">
-                <div className="flex items-start gap-4 flex-1">
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
-                    <GraduationCap className="w-6 h-6 text-white" />
-                  </div>
-                  
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-lg font-semibold text-white">{education.degree}</h3>
-                      <span className="px-2 py-1 bg-purple-500/30 text-purple-300 text-xs rounded-full border border-purple-400/30">
-                        Completed
-                      </span>
+              <div className="flex flex-col md:flex-row justify-between gap-4">
+                <div className="flex-1">
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 bg-pink-500/10 rounded-lg">
+                      <GraduationCap className="w-6 h-6 text-pink-400" />
                     </div>
-                    <p className="text-pink-400 font-medium mb-2">{education.institution}</p>
-                    
-                    <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        {education.duration}
+                    <div>
+                      <h3 className="text-xl font-bold text-white mb-1">{education.institution}</h3>
+                      <div className="flex flex-wrap gap-4 text-sm text-gray-400 mb-3">
+                        <span className="flex items-center gap-1">
+                          <BookOpen className="w-4 h-4" />
+                          {education.degree}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-4 h-4" />
+                          {education.duration}
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {education.achievements.map((achievement, index) => (
+                          <span
+                            key={index}
+                            className="inline-flex items-center gap-1 px-2 py-1 bg-white/5 rounded text-xs text-gray-300 border border-white/10"
+                          >
+                            <Award className="w-3 h-3 text-yellow-500" />
+                            {achievement}
+                          </span>
+                        ))}
                       </div>
                     </div>
-                    
-                    {education.achievements.length > 0 && (
-                      <div className="mb-3">
-                        <p className="text-sm font-medium text-gray-300 mb-2">Achievements:</p>
-                        <div className="flex flex-wrap gap-2">
-                          {education.achievements.map((achievement, achievementIndex) => (
-                            <span
-                              key={achievementIndex}
-                              className="px-2 py-1 bg-yellow-500/30 text-yellow-300 text-xs rounded-full flex items-center gap-1 border border-yellow-400/30"
-                            >
-                              <Award className="w-3 h-3" />
-                              {achievement}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-start gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => handleEditEducation(education)}
-                    className="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors border border-transparent hover:border-white/20"
+                    className="p-2 bg-blue-500/10 text-blue-400 rounded-lg hover:bg-blue-500/20 transition-colors"
                   >
                     <Edit className="w-4 h-4" />
                   </button>
                   <button
-                    onClick={() => handleDeleteEducation(education.educationId)}
-                    className="p-2 text-gray-300 hover:text-red-400 hover:bg-red-500/20 rounded-lg transition-colors border border-transparent hover:border-red-500/30"
+                    onClick={() => handleDeleteEducation(education)}
+                    className="p-2 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20 transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -260,7 +254,7 @@ const EducationManagement = () => {
         </AnimatePresence>
       </div>
 
-      {/* Add/Edit Education Modal */}
+      {/* Add/Edit Modal */}
       <AnimatePresence>
         {showAddModal && (
           <motion.div
@@ -268,29 +262,45 @@ const EducationManagement = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50"
-            onClick={() => setShowAddModal(false)}
+            onClick={() => {
+              setShowAddModal(false);
+              setEditingEducation(null);
+              setFormData({ institution: '', degree: '', duration: '', achievements: '' });
+            }}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="backdrop-blur-2xl bg-white/10 border border-white/20 rounded-2xl p-6 w-full max-w-2xl shadow-2xl"
+              className="backdrop-blur-2xl bg-white/10 border border-white/20 rounded-2xl p-6 w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="text-xl font-bold text-white mb-6 drop-shadow">
+              <h2 className="text-2xl font-bold text-white mb-6">
                 {editingEducation ? 'Edit Education' : 'Add New Education'}
               </h2>
 
               <form onSubmit={editingEducation ? handleUpdateEducation : handleAddEducation} className="space-y-4">
-                <div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
                     <label className="block text-sm font-medium text-gray-300 mb-1">Institution</label>
                     <input
                       type="text"
                       value={formData.institution}
                       onChange={(e) => setFormData({ ...formData, institution: e.target.value })}
                       className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
-                    required
-                  />
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Display Order</label>
+                    <input
+                      type="number"
+                      value={formData.order}
+                      onChange={(e) => setFormData({ ...formData, order: e.target.value })}
+                      placeholder="e.g. 1"
+                      className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
+                    />
+                  </div>
                 </div>
 
                 <div>
@@ -378,7 +388,7 @@ const EducationManagement = () => {
                   <p className="text-gray-300 text-sm">This action cannot be undone</p>
                 </div>
               </div>
-              
+
               <p className="text-gray-300 mb-6">
                 Are you sure you want to delete <span className="font-semibold text-white">"{deleteConfirm.educationTitle}"</span>? This will permanently remove the education entry from your portfolio.
               </p>

@@ -90,15 +90,29 @@ export const testimonialsAPI = {
   delete: (testimonialId) => api.delete(`/testimonials/${testimonialId}`),
 };
 
+// Contact API functions
+export const contactAPI = {
+  send: (formData) => api.post('/contact', formData),
+};
+
+// Skills API functions
+export const skillsAPI = {
+  getAll: () => api.get('/skills'),
+  create: (skillData) => api.post('/skills', skillData),
+  update: (skillId, skillData) => api.put(`/skills/${skillId}`, skillData),
+  delete: (skillId) => api.delete(`/skills/${skillId}`),
+};
+
 // Dashboard stats API function
 export const dashboardAPI = {
   getStats: async () => {
     try {
-      const [projects, experiences, education, testimonials] = await Promise.all([
+      const [projects, experiences, education, testimonials, skills] = await Promise.all([
         projectsAPI.getAll(),
         experienceAPI.getAll(),
         educationAPI.getAll(),
         testimonialsAPI.getAll(),
+        skillsAPI.getAll(),
       ]);
 
       return {
@@ -106,6 +120,7 @@ export const dashboardAPI = {
         experiences: experiences.data.length,
         education: education.data.length,
         testimonials: testimonials.data.length,
+        skills: skills.data.length,
       };
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);

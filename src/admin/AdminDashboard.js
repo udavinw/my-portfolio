@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  LayoutDashboard, 
-  FolderOpen, 
-  Briefcase, 
-  GraduationCap, 
-  MessageSquare, 
-  User, 
+import {
+  LayoutDashboard,
+  FolderOpen,
+  Briefcase,
+  GraduationCap,
+  MessageSquare,
+  User,
   Settings,
   Menu,
   X,
@@ -27,6 +27,7 @@ import ExperienceManagement from './ExperienceManagement';
 import EducationManagement from './EducationManagement';
 import TestimonialsManagement from './TestimonialsManagement';
 import ProfileManagement from './ProfileManagement';
+import SkillsManagement from './SkillsManagement';
 import { dashboardAPI } from '../services/api';
 
 const AdminDashboard = () => {
@@ -37,7 +38,8 @@ const AdminDashboard = () => {
     projects: 0,
     experiences: 0,
     education: 0,
-    testimonials: 0
+    testimonials: 0,
+    skills: 0
   });
   const [statsLoading, setStatsLoading] = useState(true);
 
@@ -55,7 +57,8 @@ const AdminDashboard = () => {
           projects: 0,
           experiences: 0,
           education: 0,
-          testimonials: 0
+          testimonials: 0,
+          skills: 0
         });
       } finally {
         setStatsLoading(false);
@@ -82,6 +85,7 @@ const AdminDashboard = () => {
   const navigationItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, color: 'text-blue-500' },
     { id: 'projects', label: 'Projects', icon: FolderOpen, color: 'text-green-500' },
+    { id: 'skills', label: 'Skills', icon: BarChart3, color: 'text-cyan-500' },
     { id: 'experience', label: 'Experience', icon: Briefcase, color: 'text-purple-500' },
     { id: 'education', label: 'Education', icon: GraduationCap, color: 'text-orange-500' },
     { id: 'testimonials', label: 'Testimonials', icon: MessageSquare, color: 'text-pink-500' },
@@ -94,6 +98,8 @@ const AdminDashboard = () => {
         return <DashboardStats stats={stats} loading={statsLoading} />;
       case 'projects':
         return <ProjectsManagement />;
+      case 'skills':
+        return <SkillsManagement />;
       case 'experience':
         return <ExperienceManagement />;
       case 'education':
@@ -139,7 +145,7 @@ const AdminDashboard = () => {
           animate={{ x: isDesktop ? 0 : (sidebarOpen ? 0 : -280) }}
           className="fixed inset-y-0 left-0 z-50 w-72 backdrop-blur-2xl bg-white/10 border-r border-white/20 shadow-2xl lg:translate-x-0 lg:static lg:inset-0"
         >
-          <AdminSidebar 
+          <AdminSidebar
             navigationItems={navigationItems}
             activeSection={activeSection}
             setActiveSection={setActiveSection}
@@ -150,7 +156,7 @@ const AdminDashboard = () => {
         {/* Main content */}
         <div className="flex-1 flex flex-col overflow-hidden lg:ml-0">
           {/* Header */}
-          <AdminHeader 
+          <AdminHeader
             onMenuClick={() => setSidebarOpen(true)}
             activeSection={activeSection}
             navigationItems={navigationItems}
