@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Code, Smartphone, Layout, Database, Server, Globe } from 'lucide-react';
+import { Code, Smartphone, Database, Server, Globe } from 'lucide-react';
 
 const Services = () => {
     const services = [
@@ -23,6 +23,11 @@ const Services = () => {
             icon: <Globe size={32} />,
             title: "Full Stack Solutions",
             description: "Providing end-to-end development services, handling both frontend and backend aspects of your project."
+        },
+        {
+            icon: <Smartphone size={32} />,
+            title: "Mobile App Development",
+            description: "Creating cross-platform mobile applications that provide seamless user experiences on both iOS and Android devices."
         }
     ];
 

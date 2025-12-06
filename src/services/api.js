@@ -93,6 +93,9 @@ export const testimonialsAPI = {
 // Contact API functions
 export const contactAPI = {
   send: (formData) => api.post('/contact', formData),
+  getAll: (page = 1, limit = 10) => api.get(`/contact?page=${page}&limit=${limit}`),
+  delete: (id) => api.delete(`/contact/${id}`),
+  markAsRead: (id) => api.put(`/contact/${id}/read`),
 };
 
 // Skills API functions

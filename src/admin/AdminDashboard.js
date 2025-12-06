@@ -6,6 +6,7 @@ import {
   Briefcase,
   GraduationCap,
   MessageSquare,
+  Mail,
   User,
   Settings,
   Menu,
@@ -28,6 +29,7 @@ import EducationManagement from './EducationManagement';
 import TestimonialsManagement from './TestimonialsManagement';
 import ProfileManagement from './ProfileManagement';
 import SkillsManagement from './SkillsManagement';
+import ContactManagement from './ContactManagement';
 import { dashboardAPI } from '../services/api';
 
 const AdminDashboard = () => {
@@ -89,6 +91,7 @@ const AdminDashboard = () => {
     { id: 'experience', label: 'Experience', icon: Briefcase, color: 'text-purple-500' },
     { id: 'education', label: 'Education', icon: GraduationCap, color: 'text-orange-500' },
     { id: 'testimonials', label: 'Testimonials', icon: MessageSquare, color: 'text-pink-500' },
+    { id: 'messages', label: 'Messages', icon: Mail, color: 'text-red-500' },
     { id: 'profile', label: 'Profile', icon: User, color: 'text-indigo-500' },
   ];
 
@@ -106,6 +109,8 @@ const AdminDashboard = () => {
         return <EducationManagement />;
       case 'testimonials':
         return <TestimonialsManagement />;
+      case 'messages':
+        return <ContactManagement />;
       case 'profile':
         return <ProfileManagement />;
       default:
